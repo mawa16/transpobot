@@ -1,15 +1,17 @@
 """
-TranspoBot — Squelette Backend FastAPI
+TranspoBot — Backend FastAPI corrigé
 Projet GLSi L3 — ESP/UCAD
 """
 
 from fastapi import FastAPI, HTTPException
-from fastapi.staticfiles import StaticFiles
 from fastapi.middleware.cors import CORSMiddleware
+from fastapi.staticfiles import StaticFiles
 from pydantic import BaseModel
-import mysql.connector
+import pymysql
+import pymysql.cursors
 import os
 import re
+import json
 import httpx
 
 app = FastAPI(title="TranspoBot API", version="1.0.0")
@@ -24,8 +26,8 @@ app.add_middleware(
 # ── Configuration ──────────────────────────────────────────────
 DB_CONFIG = {
     "host":     os.getenv("DB_HOST", "localhost"),
-    "user":     os.getenv("DB_USER", "root"),
-    "password": os.getenv("DB_PASSWORD", ""),
+    "user":     os.getenv("DB_USER", "transpobot"),
+    "password": os.getenv("DB_PASSWORD", "transpobot123"),
     "database": os.getenv("DB_NAME", "transpobot"),
 }
 
@@ -60,18 +62,23 @@ RÈGLES IMPORTANTES :
 5. Limite les résultats à 100 lignes maximum avec LIMIT.
 """
 
-# ── Connexion MySQL ────────────────────────────────────────────
+# ── Connexion MariaDB/MySQL ────────────────────────────────────
 def get_db():
-    return mysql.connector.connect(**DB_CONFIG)
+    return pymysql.connect(
+        host=DB_CONFIG["host"],
+        user=DB_CONFIG["user"],
+        password=DB_CONFIG["password"],
+        database=DB_CONFIG["database"],
+        cursorclass=pymysql.cursors.DictCursor
+    )
 
 def execute_query(sql: str):
     conn = get_db()
-    cursor = conn.cursor(dictionary=True)
     try:
-        cursor.execute(sql)
-        return cursor.fetchall()
+        with conn.cursor() as cursor:
+            cursor.execute(sql)
+            return cursor.fetchall()
     finally:
-        cursor.close()
         conn.close()
 
 # ── Appel LLM ─────────────────────────────────────────────────
@@ -92,8 +99,6 @@ async def ask_llm(question: str) -> dict:
         )
         response.raise_for_status()
         content = response.json()["choices"][0]["message"]["content"]
-        # Extraire le JSON de la réponse
-        import json
         match = re.search(r'\{.*\}', content, re.DOTALL)
         if match:
             return json.loads(match.group())
@@ -105,15 +110,12 @@ class ChatMessage(BaseModel):
 
 @app.post("/api/chat")
 async def chat(msg: ChatMessage):
-    """Point d'entrée principal : question → SQL → résultats"""
     try:
         llm_response = await ask_llm(msg.question)
         sql = llm_response.get("sql")
         explication = llm_response.get("explication", "")
-
         if not sql:
             return {"answer": explication, "data": [], "sql": None}
-
         data = execute_query(sql)
         return {
             "answer": explication,
@@ -126,14 +128,14 @@ async def chat(msg: ChatMessage):
 
 @app.get("/api/stats")
 def get_stats():
-    """Tableau de bord — statistiques rapides"""
     stats = {}
     queries = {
-        "total_trajets":    "SELECT COUNT(*) as n FROM trajets WHERE statut='termine'",
-        "trajets_en_cours": "SELECT COUNT(*) as n FROM trajets WHERE statut='en_cours'",
-        "vehicules_actifs": "SELECT COUNT(*) as n FROM vehicules WHERE statut='actif'",
-        "incidents_ouverts":"SELECT COUNT(*) as n FROM incidents WHERE resolu=FALSE",
-        "recette_totale":   "SELECT COALESCE(SUM(recette),0) as n FROM trajets WHERE statut='termine'",
+        "total_trajets":     "SELECT COUNT(*) as n FROM trajets WHERE statut='termine'",
+        "trajets_en_cours":  "SELECT COUNT(*) as n FROM trajets WHERE statut='en_cours'",
+        "vehicules_actifs":  "SELECT COUNT(*) as n FROM vehicules WHERE statut='actif'",
+        "incidents_ouverts": "SELECT COUNT(*) as n FROM incidents WHERE resolu=FALSE",
+        "recette_totale":    "SELECT COALESCE(SUM(recette),0) as n FROM trajets WHERE statut='termine'",
+        "total_passagers":   "SELECT COALESCE(SUM(nb_passagers),0) as n FROM trajets WHERE statut='termine'",
     }
     for key, sql in queries.items():
         result = execute_query(sql)
@@ -163,6 +165,17 @@ def get_trajets_recent():
         JOIN chauffeurs ch ON t.chauffeur_id = ch.id
         JOIN vehicules v ON t.vehicule_id = v.id
         ORDER BY t.date_heure_depart DESC
+        LIMIT 20
+    """)
+
+@app.get("/api/incidents")
+def get_incidents():
+    return execute_query("""
+        SELECT i.*, t.date_heure_depart, l.nom as ligne
+        FROM incidents i
+        JOIN trajets t ON i.trajet_id = t.id
+        JOIN lignes l ON t.ligne_id = l.id
+        ORDER BY i.date_incident DESC
         LIMIT 20
     """)
 
