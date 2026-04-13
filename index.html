@@ -4,19 +4,31 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>TranspoBot — Assistant IA Transport</title>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.min.js"></script>
 <style>
   * { box-sizing: border-box; margin: 0; padding: 0; }
   body { font-family: 'Segoe UI', sans-serif; background: #f0f4f8; color: #1a202c; }
   header { background: #1a56db; color: white; padding: 1rem 2rem; display: flex; align-items: center; gap: 1rem; }
   header h1 { font-size: 1.4rem; }
   header span { font-size: 2rem; }
+
+  /* Navigation onglets */
+  .tabs { background: white; border-bottom: 2px solid #e2e8f0; padding: 0 2rem; display: flex; gap: 0; max-width: 100%; }
+  .tab-btn { padding: 0.8rem 1.5rem; border: none; background: none; cursor: pointer; font-size: 0.9rem; color: #64748b; border-bottom: 3px solid transparent; margin-bottom: -2px; transition: all 0.2s; }
+  .tab-btn:hover { color: #1a56db; background: #f0f4f8; }
+  .tab-btn.active { color: #1a56db; border-bottom-color: #1a56db; font-weight: 600; }
+  .tab-content { display: none; }
+  .tab-content.active { display: block; }
+
   .container { display: grid; grid-template-columns: 1fr 2fr; gap: 1.5rem; padding: 1.5rem; max-width: 1400px; margin: 0 auto; }
+  .container-full { padding: 1.5rem; max-width: 1400px; margin: 0 auto; }
   .card { background: white; border-radius: 12px; padding: 1.2rem; box-shadow: 0 2px 8px rgba(0,0,0,0.08); }
   .stats-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 0.8rem; margin-bottom: 1rem; }
   .stat { background: #eff6ff; border-radius: 8px; padding: 0.8rem; text-align: center; }
   .stat .val { font-size: 1.8rem; font-weight: bold; color: #1a56db; }
   .stat .lbl { font-size: 0.75rem; color: #64748b; margin-top: 2px; }
-  /* Chat */
+
+  /* Chat — inchangé */
   .chat-box { height: 400px; overflow-y: auto; border: 1px solid #e2e8f0; border-radius: 8px; padding: 1rem; margin-bottom: 1rem; background: #f8fafc; }
   .msg { margin-bottom: 0.8rem; }
   .msg.user .bubble { background: #1a56db; color: white; margin-left: auto; }
@@ -29,23 +41,51 @@
   .chat-input button { background: #1a56db; color: white; border: none; border-radius: 8px; padding: 0.7rem 1.2rem; cursor: pointer; font-size: 0.95rem; }
   .chat-input button:hover { background: #1e40af; }
   .sql-preview { background: #1e293b; color: #94a3b8; font-family: monospace; font-size: 0.78rem; padding: 0.6rem; border-radius: 6px; margin-top: 0.4rem; white-space: pre-wrap; }
-  /* Suggestions */
+
+  /* Suggestions — inchangé */
   .suggestions { display: flex; flex-wrap: wrap; gap: 0.4rem; margin-bottom: 0.8rem; }
   .suggestions button { background: #eff6ff; color: #1a56db; border: 1px solid #bfdbfe; border-radius: 20px; padding: 0.3rem 0.8rem; font-size: 0.8rem; cursor: pointer; }
   .suggestions button:hover { background: #dbeafe; }
-  /* Table résultats */
+
+  /* Tables résultats — inchangé */
   .results table { width: 100%; border-collapse: collapse; font-size: 0.85rem; }
   .results th { background: #1a56db; color: white; padding: 0.5rem; text-align: left; }
   .results td { padding: 0.5rem; border-bottom: 1px solid #e2e8f0; }
   .results tr:hover td { background: #f0f4f8; }
   h2 { font-size: 1rem; color: #374151; margin-bottom: 0.8rem; }
+
+  /* Badges — inchangé */
   .badge { display: inline-block; padding: 2px 8px; border-radius: 10px; font-size: 0.75rem; font-weight: 600; }
   .badge-green { background: #dcfce7; color: #166534; }
   .badge-orange { background: #fff7ed; color: #9a3412; }
   .badge-red { background: #fee2e2; color: #991b1b; }
+  .badge-blue { background: #dbeafe; color: #1e40af; }
+
+  /* Grille véhicules */
+  .vehicles-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(220px, 1fr)); gap: 1rem; margin-top: 1rem; }
+  .vehicle-card { background: #f8fafc; border: 1px solid #e2e8f0; border-radius: 10px; padding: 1rem; }
+  .vehicle-card .immat { font-weight: 700; font-size: 1rem; color: #1a56db; margin-bottom: 0.4rem; }
+  .vehicle-card .info { font-size: 0.8rem; color: #64748b; margin-top: 0.3rem; }
+
+  /* Grille chauffeurs */
+  .drivers-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(240px, 1fr)); gap: 1rem; margin-top: 1rem; }
+  .driver-card { background: #f8fafc; border: 1px solid #e2e8f0; border-radius: 10px; padding: 1rem; display: flex; align-items: center; gap: 0.8rem; }
+  .driver-avatar { width: 42px; height: 42px; border-radius: 50%; background: #1a56db; color: white; display: flex; align-items: center; justify-content: center; font-weight: 700; font-size: 1rem; flex-shrink: 0; }
+  .driver-info .name { font-weight: 600; font-size: 0.9rem; }
+  .driver-info .detail { font-size: 0.78rem; color: #64748b; margin-top: 2px; }
+
+  /* Graphique */
+  .chart-wrapper { position: relative; height: 280px; margin-top: 0.5rem; }
+  .grid-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 1.5rem; margin-top: 1.5rem; }
+
+  @media (max-width: 900px) {
+    .container { grid-template-columns: 1fr; }
+    .grid-2 { grid-template-columns: 1fr; }
+  }
 </style>
 </head>
 <body>
+
 <header>
   <span>🚌</span>
   <div>
@@ -54,57 +94,197 @@
   </div>
 </header>
 
-<div class="container">
-  <!-- Colonne gauche -->
-  <div>
-    <div class="card" style="margin-bottom:1rem">
-      <h2>📊 Tableau de bord</h2>
-      <div class="stats-grid" id="stats">
-        <div class="stat"><div class="val">—</div><div class="lbl">Trajets terminés</div></div>
-        <div class="stat"><div class="val">—</div><div class="lbl">En cours</div></div>
-        <div class="stat"><div class="val">—</div><div class="lbl">Véhicules actifs</div></div>
-        <div class="stat"><div class="val">—</div><div class="lbl">Incidents ouverts</div></div>
+<!-- Onglets de navigation -->
+<div class="tabs">
+  <button class="tab-btn active" onclick="showTab('dashboard')">📊 Tableau de bord</button>
+  <button class="tab-btn" onclick="showTab('vehicules')">🚌 Véhicules</button>
+  <button class="tab-btn" onclick="showTab('chauffeurs')">👤 Chauffeurs</button>
+  <button class="tab-btn" onclick="showTab('recettes')">💰 Recettes</button>
+  <button class="tab-btn" onclick="showTab('chat')">💬 Assistant IA</button>
+</div>
+
+<!-- ═══════════════════════════════════════════════ -->
+<!--  ONGLET 1 : Tableau de bord (inchangé)         -->
+<!-- ═══════════════════════════════════════════════ -->
+<div id="tab-dashboard" class="tab-content active">
+  <div class="container">
+    <div>
+      <div class="card" style="margin-bottom:1rem">
+        <h2>📊 Tableau de bord</h2>
+        <div class="stats-grid" id="stats">
+          <div class="stat"><div class="val">—</div><div class="lbl">Trajets terminés</div></div>
+          <div class="stat"><div class="val">—</div><div class="lbl">En cours</div></div>
+          <div class="stat"><div class="val">—</div><div class="lbl">Véhicules actifs</div></div>
+          <div class="stat"><div class="val">—</div><div class="lbl">Incidents ouverts</div></div>
+        </div>
+      </div>
+      <div class="card">
+        <h2>🕒 Trajets récents</h2>
+        <div class="results" id="trajets-table"><p style="color:#94a3b8;font-size:0.85rem">Chargement...</p></div>
       </div>
     </div>
 
+    <!-- Chat — colonne droite du dashboard -->
     <div class="card">
-      <h2>🕒 Trajets récents</h2>
-      <div class="results" id="trajets-table"><p style="color:#94a3b8;font-size:0.85rem">Chargement...</p></div>
-    </div>
-  </div>
-
-  <!-- Colonne droite : Chat -->
-  <div class="card">
-    <h2>💬 Assistant TranspoBot</h2>
-    <div class="suggestions">
-      <button onclick="ask('Combien de trajets ont été effectués cette semaine ?')">Trajets cette semaine</button>
-      <button onclick="ask('Quel chauffeur a le plus de trajets ?')">Meilleur chauffeur</button>
-      <button onclick="ask('Quels véhicules sont en maintenance ?')">Véhicules en maintenance</button>
-      <button onclick="ask('Liste les incidents graves non résolus')">Incidents graves</button>
-      <button onclick="ask('Quelle est la recette totale du mois de mars 2026 ?')">Recette mars 2026</button>
-    </div>
-
-    <div class="chat-box" id="chat-box">
-      <div class="msg bot">
-        <div class="bubble">👋 Bonjour ! Je suis TranspoBot, votre assistant intelligent.<br>Posez-moi n'importe quelle question sur votre flotte, vos trajets ou vos chauffeurs !</div>
+      <h2>💬 Assistant TranspoBot</h2>
+      <div class="suggestions">
+        <button onclick="ask('Combien de trajets ont été effectués cette semaine ?')">Trajets cette semaine</button>
+        <button onclick="ask('Quel chauffeur a le plus de trajets ?')">Meilleur chauffeur</button>
+        <button onclick="ask('Quels véhicules sont en maintenance ?')">Véhicules en maintenance</button>
+        <button onclick="ask('Liste les incidents graves non résolus')">Incidents graves</button>
+        <button onclick="ask('Quelle est la recette totale du mois de mars 2026 ?')">Recette mars 2026</button>
       </div>
-    </div>
-
-    <div class="chat-input">
-      <input type="text" id="user-input" placeholder="Ex: Combien de trajets ce mois-ci ?" onkeypress="if(event.key==='Enter') sendMessage()">
-      <button onclick="sendMessage()">Envoyer ➤</button>
-    </div>
-
-    <div id="results-section" style="margin-top:1rem; display:none">
-      <h2>📋 Résultats</h2>
-      <div class="results" id="results-table"></div>
+      <div class="chat-box" id="chat-box">
+        <div class="msg bot">
+          <div class="bubble">👋 Bonjour ! Je suis TranspoBot, votre assistant intelligent.<br>Posez-moi n'importe quelle question sur votre flotte, vos trajets ou vos chauffeurs !</div>
+        </div>
+      </div>
+      <div class="chat-input">
+        <input type="text" id="user-input" placeholder="Ex: Combien de trajets ce mois-ci ?" onkeypress="if(event.key==='Enter') sendMessage()">
+        <button onclick="sendMessage()">Envoyer ➤</button>
+      </div>
+      <div id="results-section" style="margin-top:1rem; display:none">
+        <h2>📋 Résultats</h2>
+        <div class="results" id="results-table"></div>
+      </div>
     </div>
   </div>
 </div>
 
+<!-- ═══════════════════════════════════════════════ -->
+<!--  ONGLET 2 : Véhicules                          -->
+<!-- ═══════════════════════════════════════════════ -->
+<div id="tab-vehicules" class="tab-content">
+  <div class="container-full">
+    <div class="card">
+      <h2>🚌 Flotte de véhicules</h2>
+
+      <!-- Filtres -->
+      <div style="display:flex; gap:0.5rem; margin-bottom:1rem; flex-wrap:wrap;">
+        <button class="suggestions" onclick="filtrerVehicules('tous')"    style="background:#1a56db;color:white;border:none;border-radius:20px;padding:0.3rem 0.9rem;cursor:pointer;">Tous</button>
+        <button onclick="filtrerVehicules('actif')"       style="background:#dcfce7;color:#166534;border:1px solid #bbf7d0;border-radius:20px;padding:0.3rem 0.9rem;cursor:pointer;">Actifs</button>
+        <button onclick="filtrerVehicules('maintenance')" style="background:#fff7ed;color:#9a3412;border:1px solid #fed7aa;border-radius:20px;padding:0.3rem 0.9rem;cursor:pointer;">En maintenance</button>
+        <button onclick="filtrerVehicules('hors_service')"style="background:#fee2e2;color:#991b1b;border:1px solid #fecaca;border-radius:20px;padding:0.3rem 0.9rem;cursor:pointer;">Hors service</button>
+      </div>
+
+      <div class="vehicles-grid" id="vehicles-grid">
+        <p style="color:#94a3b8;font-size:0.85rem">Chargement...</p>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ═══════════════════════════════════════════════ -->
+<!--  ONGLET 3 : Chauffeurs                         -->
+<!-- ═══════════════════════════════════════════════ -->
+<div id="tab-chauffeurs" class="tab-content">
+  <div class="container-full">
+    <div class="card">
+      <h2>👤 Liste des chauffeurs</h2>
+
+      <!-- Filtres -->
+      <div style="display:flex; gap:0.5rem; margin-bottom:1rem;">
+        <button onclick="filtrerChauffeurs('tous')"        style="background:#1a56db;color:white;border:none;border-radius:20px;padding:0.3rem 0.9rem;cursor:pointer;">Tous</button>
+        <button onclick="filtrerChauffeurs('disponible')"  style="background:#dcfce7;color:#166534;border:1px solid #bbf7d0;border-radius:20px;padding:0.3rem 0.9rem;cursor:pointer;">Disponibles</button>
+        <button onclick="filtrerChauffeurs('indisponible')"style="background:#fee2e2;color:#991b1b;border:1px solid #fecaca;border-radius:20px;padding:0.3rem 0.9rem;cursor:pointer;">Indisponibles</button>
+      </div>
+
+      <div class="drivers-grid" id="drivers-grid">
+        <p style="color:#94a3b8;font-size:0.85rem">Chargement...</p>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ═══════════════════════════════════════════════ -->
+<!--  ONGLET 4 : Recettes                           -->
+<!-- ═══════════════════════════════════════════════ -->
+<div id="tab-recettes" class="tab-content">
+  <div class="container-full">
+
+    <!-- KPI recettes -->
+    <div class="stats-grid" style="margin-bottom:1.5rem; grid-template-columns: repeat(3,1fr);">
+      <div class="stat"><div class="val" id="recette-totale">—</div><div class="lbl">Recette totale (FCFA)</div></div>
+      <div class="stat"><div class="val" id="recette-mois">—</div><div class="lbl">Ce mois-ci (FCFA)</div></div>
+      <div class="stat"><div class="val" id="nb-passagers">—</div><div class="lbl">Total passagers</div></div>
+    </div>
+
+    <div class="grid-2">
+      <!-- Graphique recettes par mois -->
+      <div class="card">
+        <h2>📈 Recettes par mois</h2>
+        <div class="chart-wrapper">
+          <canvas id="chart-recettes"></canvas>
+        </div>
+      </div>
+
+      <!-- Graphique trajets par ligne -->
+      <div class="card">
+        <h2>🗺️ Trajets par ligne</h2>
+        <div class="chart-wrapper">
+          <canvas id="chart-lignes"></canvas>
+        </div>
+      </div>
+    </div>
+
+  </div>
+</div>
+
+<!-- ═══════════════════════════════════════════════ -->
+<!--  ONGLET 5 : Chat IA (plein écran)              -->
+<!-- ═══════════════════════════════════════════════ -->
+<div id="tab-chat" class="tab-content">
+  <div class="container-full">
+    <div class="card">
+      <h2>💬 Assistant TranspoBot — Mode plein écran</h2>
+      <div class="suggestions">
+        <button onclick="ask2('Combien de trajets ont été effectués cette semaine ?')">Trajets cette semaine</button>
+        <button onclick="ask2('Quel chauffeur a le plus de trajets ?')">Meilleur chauffeur</button>
+        <button onclick="ask2('Quels véhicules sont en maintenance ?')">Véhicules en maintenance</button>
+        <button onclick="ask2('Liste les incidents graves non résolus')">Incidents graves</button>
+        <button onclick="ask2('Quelle est la recette totale du mois de mars 2026 ?')">Recette mars 2026</button>
+        <button onclick="ask2('Combien de chauffeurs sont disponibles ?')">Chauffeurs disponibles</button>
+        <button onclick="ask2('Quel véhicule a le plus de kilométrage ?')">Kilométrage max</button>
+      </div>
+      <div class="chat-box" id="chat-box-2" style="height:500px">
+        <div class="msg bot">
+          <div class="bubble">👋 Bonjour ! Je suis TranspoBot.<br>Posez-moi n'importe quelle question en français ou en anglais !</div>
+        </div>
+      </div>
+      <div class="chat-input">
+        <input type="text" id="user-input-2" placeholder="Ex: Quel chauffeur a le plus d'incidents ce mois-ci ?" onkeypress="if(event.key==='Enter') sendMessage2()">
+        <button onclick="sendMessage2()">Envoyer ➤</button>
+      </div>
+      <div id="results-section-2" style="margin-top:1rem; display:none">
+        <h2>📋 Résultats</h2>
+        <div class="results" id="results-table-2"></div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ═══════════════════════════════════════════════ -->
+<!--  SCRIPTS                                       -->
+<!-- ═══════════════════════════════════════════════ -->
 <script>
 const API = '';  // Remplacer par l'URL de votre backend
 
+// ── Données en mémoire ─────────────────────────────
+let allVehicules = [];
+let allChauffeurs = [];
+
+// ── Navigation onglets ─────────────────────────────
+function showTab(name) {
+  document.querySelectorAll('.tab-content').forEach(t => t.classList.remove('active'));
+  document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
+  document.getElementById('tab-' + name).classList.add('active');
+  event.target.classList.add('active');
+  if (name === 'vehicules' && allVehicules.length === 0) loadVehicules();
+  if (name === 'chauffeurs' && allChauffeurs.length === 0) loadChauffeurs();
+  if (name === 'recettes') loadRecettes();
+}
+
+// ── DASHBOARD (code original inchangé) ────────────
 async function loadStats() {
   try {
     const r = await fetch(`${API}/api/stats`);
@@ -132,6 +312,7 @@ async function loadTrajets() {
   } catch(e) { console.warn('Trajets non disponibles'); }
 }
 
+// ── CHAT original (inchangé) ───────────────────────
 function ask(q) {
   document.getElementById('user-input').value = q;
   sendMessage();
@@ -153,7 +334,6 @@ async function sendMessage() {
   input.value = '';
   addMessage('user', question);
   addMessage('bot', '⏳ Analyse en cours...');
-
   try {
     const r = await fetch(`${API}/api/chat`, {
       method: 'POST',
@@ -161,9 +341,8 @@ async function sendMessage() {
       body: JSON.stringify({ question })
     });
     const data = await r.json();
-    document.querySelector('.msg.bot:last-child').remove();
+    document.querySelector('#chat-box .msg.bot:last-child').remove();
     addMessage('bot', data.answer + (data.count !== undefined ? ` (${data.count} résultat${data.count > 1 ? 's' : ''})` : ''), data.sql);
-
     if (data.data && data.data.length > 0) {
       const section = document.getElementById('results-section');
       section.style.display = 'block';
@@ -172,13 +351,53 @@ async function sendMessage() {
       document.getElementById('results-table').innerHTML = `<table><thead><tr>${keys.map(k=>`<th>${k}</th>`).join('')}</tr></thead><tbody>${rows}</tbody></table>`;
     }
   } catch(e) {
-    document.querySelector('.msg.bot:last-child').remove();
+    document.querySelector('#chat-box .msg.bot:last-child').remove();
     addMessage('bot', '❌ Erreur de connexion au serveur.');
   }
 }
 
-loadStats();
-loadTrajets();
-</script>
-</body>
-</html>
+// ── CHAT plein écran (onglet 5) ────────────────────
+function ask2(q) {
+  document.getElementById('user-input-2').value = q;
+  sendMessage2();
+}
+
+function addMessage2(role, text, sql = null) {
+  const box = document.getElementById('chat-box-2');
+  const div = document.createElement('div');
+  div.className = `msg ${role}`;
+  div.innerHTML = `<div class="bubble">${text}${sql ? `<div class="sql-preview">${sql}</div>` : ''}</div>`;
+  box.appendChild(div);
+  box.scrollTop = box.scrollHeight;
+}
+
+async function sendMessage2() {
+  const input = document.getElementById('user-input-2');
+  const question = input.value.trim();
+  if (!question) return;
+  input.value = '';
+  addMessage2('user', question);
+  addMessage2('bot', '⏳ Analyse en cours...');
+  try {
+    const r = await fetch(`${API}/api/chat`, {
+      method: 'POST',
+      headers: {'Content-Type': 'application/json'},
+      body: JSON.stringify({ question })
+    });
+    const data = await r.json();
+    document.querySelector('#chat-box-2 .msg.bot:last-child').remove();
+    addMessage2('bot', data.answer + (data.count !== undefined ? ` (${data.count} résultat${data.count > 1 ? 's' : ''})` : ''), data.sql);
+    if (data.data && data.data.length > 0) {
+      const section = document.getElementById('results-section-2');
+      section.style.display = 'block';
+      const keys = Object.keys(data.data[0]);
+      const rows = data.data.map(row => `<tr>${keys.map(k => `<td>${row[k] ?? ''}</td>`).join('')}</tr>`).join('');
+      document.getElementById('results-table-2').innerHTML = `<table><thead><tr>${keys.map(k=>`<th>${k}</th>`).join('')}</tr></thead><tbody>${rows}</tbody></table>`;
+    }
+  } catch(e) {
+    document.querySelector('#chat-box-2 .msg.bot:last-child').remove();
+    addMessage2('bot', '❌ Erreur de connexion au serveur.');
+  }
+}
+
+// ── VÉHICULES ──────────
