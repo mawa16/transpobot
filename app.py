@@ -10,6 +10,8 @@ from pydantic import BaseModel
 import pymysql
 import pymysql.cursors
 import os
+from dotenv import load_dotenv
+load_dotenv()
 import re
 import json
 import httpx
@@ -47,21 +49,22 @@ trajets(id, ligne_id, chauffeur_id, vehicule_id, date_heure_depart, date_heure_a
 incidents(id, trajet_id, type[panne/accident/retard/autre], description, gravite[faible/moyen/grave], date_incident, resolu)
 """
 
-SYSTEM_PROMPT = f"""Tu es TranspoBot, l'assistant intelligent de la compagnie de transport.
-Tu aides les gestionnaires à interroger la base de données en langage naturel.
+SYSTEM_PROMPT =f"""Tu es TranspoBot, assistant de gestion de transport.
 
 {DB_SCHEMA}
 
-RÈGLES IMPORTANTES :
-1. Génère UNIQUEMENT des requêtes SELECT (pas de INSERT, UPDATE, DELETE, DROP).
-2. Réponds TOUJOURS en JSON avec ce format :
-   {{"sql": "SELECT ...", "explication": "Ce que fait la requête"}}
-3. Si la question ne peut pas être répondue avec SQL, réponds :
-   {{"sql": null, "explication": "Explication de pourquoi"}}
-4. Utilise des alias clairs dans les requêtes.
-5. Limite les résultats à 100 lignes maximum avec LIMIT.
+RÈGLES :
+1. Génère UNIQUEMENT des requêtes SELECT.
+2. Réponds TOUJOURS en JSON :
+   {{"sql": "SELECT ...", "explication": "réponse courte et directe"}}
+3. L'explication doit être TRÈS COURTE et DIRECTE, max 1 phrase.
+   Exemples :
+   - "7 véhicules sont actifs."
+   - "DIOP Mamadou avec 8 trajets."
+   - "2 véhicules en maintenance : DK-9012-EF et DK-8901-ST."
+4. PAS de description de la requête SQL dans l'explication.
+5. Limite les résultats à 100 lignes avec LIMIT.
 """
-
 # ── Connexion MariaDB/MySQL ────────────────────────────────────
 def get_db():
     return pymysql.connect(
@@ -77,10 +80,15 @@ def execute_query(sql: str):
     try:
         with conn.cursor() as cursor:
             cursor.execute(sql)
-            return cursor.fetchall()
+            results = cursor.fetchall()
+            # Convertir en liste de dicts sérialisables
+            return [
+                {k: (v.isoformat() if hasattr(v, 'isoformat') else v) 
+                 for k, v in row.items()}
+                for row in results
+            ]
     finally:
         conn.close()
-
 # ── Appel LLM ─────────────────────────────────────────────────
 async def ask_llm(question: str) -> dict:
     async with httpx.AsyncClient() as client:
@@ -99,11 +107,14 @@ async def ask_llm(question: str) -> dict:
         )
         response.raise_for_status()
         content = response.json()["choices"][0]["message"]["content"]
+        # Nettoyer les balises markdown ```json
+        content = re.sub(r'```json\s*', '', content)
+        content = re.sub(r'```\s*', '', content)
+        content = content.strip()
         match = re.search(r'\{.*\}', content, re.DOTALL)
         if match:
             return json.loads(match.group())
         raise ValueError("Réponse LLM invalide")
-
 # ── Routes API ─────────────────────────────────────────────────
 class ChatMessage(BaseModel):
     question: str
