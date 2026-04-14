@@ -7,67 +7,332 @@
 <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.min.js"></script>
 <style>
   * { box-sizing: border-box; margin: 0; padding: 0; }
-  body { font-family: 'Segoe UI', sans-serif; background: #f0f4f8; color: #1a202c; }
-  header { background: #1a56db; color: white; padding: 1rem 2rem; display: flex; align-items: center; gap: 1rem; }
-  header h1 { font-size: 1.4rem; }
-  header span { font-size: 2rem; }
-  .tabs { background: white; border-bottom: 2px solid #e2e8f0; padding: 0 2rem; display: flex; gap: 0; max-width: 100%; }
-  .tab-btn { padding: 0.8rem 1.5rem; border: none; background: none; cursor: pointer; font-size: 0.9rem; color: #64748b; border-bottom: 3px solid transparent; margin-bottom: -2px; transition: all 0.2s; }
-  .tab-btn:hover { color: #1a56db; background: #f0f4f8; }
+
+  body {
+    font-family: 'Segoe UI', sans-serif;
+    background: #f1f5f9;
+    color: #1e293b;
+  }
+
+  /* ── HEADER ── */
+  header {
+    background: #1a56db;
+    color: white;
+    padding: 1rem 2rem;
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+    box-shadow: 0 2px 16px rgba(26,86,219,0.28);
+  }
+  .hdr-icon {
+    width: 46px; height: 46px;
+    background: rgba(255,255,255,0.18);
+    border-radius: 50%;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 22px;
+    flex-shrink: 0;
+  }
+  header h1 { font-size: 1.3rem; font-weight: 700; letter-spacing: -0.3px; }
+  header small { font-size: 0.75rem; opacity: 0.72; }
+  .hdr-badge {
+    margin-left: auto;
+    background: rgba(255,255,255,0.15);
+    border: 1px solid rgba(255,255,255,0.22);
+    border-radius: 20px;
+    padding: 5px 14px;
+    font-size: 0.75rem;
+    display: flex; align-items: center; gap: 7px;
+  }
+  .live-dot {
+    width: 7px; height: 7px;
+    background: #4ade80;
+    border-radius: 50%;
+  }
+
+  /* ── TABS ── */
+  .tabs {
+    background: white;
+    border-bottom: 1px solid #e2e8f0;
+    padding: 0 1.5rem;
+    display: flex;
+    overflow-x: auto;
+    gap: 0;
+  }
+  .tab-btn {
+    padding: 0.85rem 1.3rem;
+    border: none;
+    background: none;
+    cursor: pointer;
+    font-size: 0.875rem;
+    font-weight: 500;
+    color: #64748b;
+    border-bottom: 3px solid transparent;
+    margin-bottom: -1px;
+    white-space: nowrap;
+    transition: color 0.18s, background 0.18s;
+  }
+  .tab-btn:hover { color: #1a56db; background: #f5f8ff; }
   .tab-btn.active { color: #1a56db; border-bottom-color: #1a56db; font-weight: 600; }
+
   .tab-content { display: none; }
   .tab-content.active { display: block; }
-  .container { display: grid; grid-template-columns: 1fr 2fr; gap: 1.5rem; padding: 1.5rem; max-width: 1400px; margin: 0 auto; }
-  .container-full { padding: 1.5rem; max-width: 1400px; margin: 0 auto; }
-  .card { background: white; border-radius: 12px; padding: 1.2rem; box-shadow: 0 2px 8px rgba(0,0,0,0.08); }
-  .stats-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 0.8rem; margin-bottom: 1rem; }
-  .stat { background: #eff6ff; border-radius: 8px; padding: 0.8rem; text-align: center; }
-  .stat .val { font-size: 1.8rem; font-weight: bold; color: #1a56db; }
-  .stat .lbl { font-size: 0.75rem; color: #64748b; margin-top: 2px; }
-  .chat-box { height: 400px; overflow-y: auto; border: 1px solid #e2e8f0; border-radius: 8px; padding: 1rem; margin-bottom: 1rem; background: #f8fafc; }
-  .msg { margin-bottom: 0.8rem; }
-  .msg.user .bubble { background: #1a56db; color: white; margin-left: auto; }
-  .msg.bot .bubble { background: white; border: 1px solid #e2e8f0; }
-  .bubble { display: inline-block; padding: 0.6rem 1rem; border-radius: 12px; max-width: 85%; font-size: 0.9rem; line-height: 1.5; }
+
+  /* ── LAYOUT ── */
+  .container {
+    display: grid;
+    grid-template-columns: minmax(0,1fr) minmax(0,2fr);
+    gap: 1.2rem;
+    padding: 1.2rem;
+    max-width: 1400px;
+    margin: 0 auto;
+  }
+  .container-full { padding: 1.2rem; max-width: 1400px; margin: 0 auto; }
+
+  /* ── CARDS ── */
+  .card {
+    background: white;
+    border-radius: 14px;
+    padding: 1.2rem 1.3rem;
+    border: 0.5px solid #e2e8f0;
+    box-shadow: 0 1px 6px rgba(0,0,0,0.05);
+  }
+
+  h2 {
+    font-size: 0.78rem;
+    font-weight: 600;
+    color: #64748b;
+    text-transform: uppercase;
+    letter-spacing: 0.07em;
+    margin-bottom: 0.9rem;
+  }
+
+  /* ── STATS ── */
+  .stats-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 0.7rem; margin-bottom: 1rem; }
+  .stat {
+    background: #eff6ff;
+    border-radius: 10px;
+    padding: 0.85rem;
+    text-align: center;
+    border: 1px solid #dbeafe;
+  }
+  .stat .val { font-size: 1.75rem; font-weight: 700; color: #1a56db; line-height: 1.1; }
+  .stat .lbl { font-size: 0.7rem; color: #64748b; margin-top: 4px; font-weight: 500; }
+
+  /* ── BADGES ── */
+  .badge { display: inline-block; padding: 2px 9px; border-radius: 20px; font-size: 0.7rem; font-weight: 600; }
+  .badge-green  { background: #dcfce7; color: #15803d; }
+  .badge-orange { background: #fff7ed; color: #c2410c; }
+  .badge-red    { background: #fee2e2; color: #b91c1c; }
+  .badge-blue   { background: #dbeafe; color: #1d4ed8; }
+
+  /* ── TABLES ── */
+  .results table { width: 100%; border-collapse: collapse; font-size: 0.83rem; }
+  .results th {
+    background: #1a56db;
+    color: white;
+    padding: 0.5rem 0.7rem;
+    text-align: left;
+    font-weight: 500;
+    font-size: 0.75rem;
+  }
+  .results th:first-child { border-radius: 8px 0 0 0; }
+  .results th:last-child  { border-radius: 0 8px 0 0; }
+  .results td { padding: 0.5rem 0.7rem; border-bottom: 1px solid #f1f5f9; }
+  .results tr:hover td { background: #f8fafc; }
+
+  /* ── CHAT ── */
+  .chat-box {
+    height: 400px;
+    overflow-y: auto;
+    border: 1px solid #e2e8f0;
+    border-radius: 12px;
+    padding: 1rem;
+    margin-bottom: 1rem;
+    background: #f8fafc;
+    display: flex;
+    flex-direction: column;
+    gap: 0.55rem;
+  }
+  .msg { }
   .msg.user { text-align: right; }
-  .chat-input { display: flex; gap: 0.5rem; }
-  .chat-input input { flex: 1; border: 1px solid #e2e8f0; border-radius: 8px; padding: 0.7rem 1rem; font-size: 0.95rem; outline: none; }
-  .chat-input input:focus { border-color: #1a56db; }
-  .chat-input button { background: #1a56db; color: white; border: none; border-radius: 8px; padding: 0.7rem 1.2rem; cursor: pointer; font-size: 0.95rem; }
-  .chat-input button:hover { background: #1e40af; }
-  .sql-preview { background: #1e293b; color: #94a3b8; font-family: monospace; font-size: 0.78rem; padding: 0.6rem; border-radius: 6px; margin-top: 0.4rem; white-space: pre-wrap; }
-  .suggestions { display: flex; flex-wrap: wrap; gap: 0.4rem; margin-bottom: 0.8rem; }
-  .suggestions button { background: #eff6ff; color: #1a56db; border: 1px solid #bfdbfe; border-radius: 20px; padding: 0.3rem 0.8rem; font-size: 0.8rem; cursor: pointer; }
+  .msg.bot  { text-align: left; }
+  .msg.user .bubble {
+    background: #1a56db;
+    color: white;
+    border-radius: 16px 16px 4px 16px;
+    margin-left: auto;
+  }
+  .msg.bot .bubble {
+    background: white;
+    border: 1px solid #e2e8f0;
+    color: #1e293b;
+    border-radius: 16px 16px 16px 4px;
+  }
+  .bubble {
+    display: inline-block;
+    padding: 0.6rem 1rem;
+    max-width: 85%;
+    font-size: 0.875rem;
+    line-height: 1.55;
+  }
+  .sql-preview {
+    background: #1e293b;
+    color: #94a3b8;
+    font-family: monospace;
+    font-size: 0.72rem;
+    padding: 0.55rem 0.75rem;
+    border-radius: 6px;
+    margin-top: 6px;
+    white-space: pre-wrap;
+    text-align: left;
+  }
+
+  /* ── SUGGESTIONS ── */
+  .suggestions { display: flex; flex-wrap: wrap; gap: 0.35rem; margin-bottom: 0.9rem; }
+  .suggestions button {
+    background: #eff6ff;
+    color: #1d4ed8;
+    border: 1px solid #bfdbfe;
+    border-radius: 20px;
+    padding: 0.3rem 0.85rem;
+    font-size: 0.75rem;
+    cursor: pointer;
+    transition: background 0.15s;
+  }
   .suggestions button:hover { background: #dbeafe; }
-  .results table { width: 100%; border-collapse: collapse; font-size: 0.85rem; }
-  .results th { background: #1a56db; color: white; padding: 0.5rem; text-align: left; }
-  .results td { padding: 0.5rem; border-bottom: 1px solid #e2e8f0; }
-  .results tr:hover td { background: #f0f4f8; }
-  h2 { font-size: 1rem; color: #374151; margin-bottom: 0.8rem; }
-  .badge { display: inline-block; padding: 2px 8px; border-radius: 10px; font-size: 0.75rem; font-weight: 600; }
-  .badge-green { background: #dcfce7; color: #166534; }
-  .badge-orange { background: #fff7ed; color: #9a3412; }
-  .badge-red { background: #fee2e2; color: #991b1b; }
-  .badge-blue { background: #dbeafe; color: #1e40af; }
-  .vehicles-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(220px, 1fr)); gap: 1rem; margin-top: 1rem; }
-  .vehicle-card { background: #f8fafc; border: 1px solid #e2e8f0; border-radius: 10px; padding: 1rem; }
-  .vehicle-card .immat { font-weight: 700; font-size: 1rem; color: #1a56db; margin-bottom: 0.4rem; }
-  .vehicle-card .info { font-size: 0.8rem; color: #64748b; margin-top: 0.3rem; }
-  .drivers-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(240px, 1fr)); gap: 1rem; margin-top: 1rem; }
-  .driver-card { background: #f8fafc; border: 1px solid #e2e8f0; border-radius: 10px; padding: 1rem; display: flex; align-items: center; gap: 0.8rem; }
-  .driver-avatar { width: 42px; height: 42px; border-radius: 50%; background: #1a56db; color: white; display: flex; align-items: center; justify-content: center; font-weight: 700; font-size: 1rem; flex-shrink: 0; }
-  .driver-info .name { font-weight: 600; font-size: 0.9rem; }
-  .driver-info .detail { font-size: 0.78rem; color: #64748b; margin-top: 2px; }
+
+  /* ── CHAT INPUT ── */
+  .chat-input { display: flex; gap: 0.5rem; }
+  .chat-input input {
+    flex: 1;
+    border: 1px solid #cbd5e1;
+    border-radius: 10px;
+    padding: 0.65rem 1rem;
+    font-size: 0.9rem;
+    outline: none;
+    transition: border-color 0.15s, box-shadow 0.15s;
+  }
+  .chat-input input:focus {
+    border-color: #1a56db;
+    box-shadow: 0 0 0 3px rgba(26,86,219,0.1);
+  }
+  .chat-input button {
+    background: #1a56db;
+    color: white;
+    border: none;
+    border-radius: 10px;
+    padding: 0.65rem 1.2rem;
+    cursor: pointer;
+    font-size: 0.9rem;
+    font-weight: 500;
+    transition: background 0.15s;
+  }
+  .chat-input button:hover { background: #1e40af; }
+
+  /* ── FILTER PILLS ── */
+  .filter-row { display: flex; gap: 0.4rem; margin-bottom: 1rem; flex-wrap: wrap; }
+  .fpill {
+    border-radius: 20px;
+    padding: 0.3rem 0.9rem;
+    font-size: 0.78rem;
+    font-weight: 500;
+    cursor: pointer;
+    transition: opacity 0.15s;
+    border: none;
+  }
+  .fpill:hover { opacity: 0.82; }
+  .fp-blue   { background: #1a56db; color: white; }
+  .fp-green  { background: #dcfce7; color: #15803d; border: 1px solid #bbf7d0; }
+  .fp-orange { background: #fff7ed; color: #c2410c; border: 1px solid #fed7aa; }
+  .fp-red    { background: #fee2e2; color: #b91c1c; border: 1px solid #fecaca; }
+
+  /* ── VEHICLES ── */
+  .vehicles-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
+    gap: 1rem;
+    margin-top: 0.5rem;
+  }
+  .vehicle-card {
+    background: #f8fafc;
+    border: 1px solid #e2e8f0;
+    border-radius: 12px;
+    padding: 1rem;
+    transition: box-shadow 0.18s, transform 0.18s;
+  }
+  .vehicle-card:hover {
+    box-shadow: 0 6px 18px rgba(26,86,219,0.1);
+    transform: translateY(-2px);
+  }
+  .vehicle-card .immat { font-weight: 700; font-size: 0.95rem; color: #1a56db; margin-bottom: 0.5rem; }
+  .vehicle-card .info { font-size: 0.78rem; color: #64748b; margin-top: 0.3rem; }
+  .vehicle-card .info strong { color: #1e293b; }
+
+  /* ── DRIVERS ── */
+  .drivers-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(240px, 1fr));
+    gap: 1rem;
+    margin-top: 0.5rem;
+  }
+  .driver-card {
+    background: #f8fafc;
+    border: 1px solid #e2e8f0;
+    border-radius: 12px;
+    padding: 1rem;
+    display: flex;
+    align-items: center;
+    gap: 0.9rem;
+    transition: box-shadow 0.18s, transform 0.18s;
+  }
+  .driver-card:hover {
+    box-shadow: 0 6px 18px rgba(26,86,219,0.1);
+    transform: translateY(-2px);
+  }
+  .driver-avatar {
+    width: 44px; height: 44px;
+    border-radius: 50%;
+    background: #1a56db;
+    color: white;
+    display: flex; align-items: center; justify-content: center;
+    font-weight: 700;
+    font-size: 0.95rem;
+    flex-shrink: 0;
+  }
+  .driver-info .name { font-weight: 600; font-size: 0.875rem; color: #1e293b; }
+  .driver-info .detail { font-size: 0.75rem; color: #64748b; margin-top: 2px; }
+
+  /* ── CHARTS ── */
   .chart-wrapper { position: relative; height: 280px; margin-top: 0.5rem; }
-  .grid-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 1.5rem; margin-top: 1.5rem; }
-  @media (max-width: 900px) { .container { grid-template-columns: 1fr; } .grid-2 { grid-template-columns: 1fr; } }
+  .grid-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 1.2rem; margin-top: 1.2rem; }
+
+  /* ── RECETTES STATS ── */
+  .recettes-stats {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 0.8rem;
+    margin-bottom: 1.2rem;
+  }
+
+  @media (max-width: 900px) {
+    .container { grid-template-columns: 1fr; }
+    .grid-2 { grid-template-columns: 1fr; }
+    .recettes-stats { grid-template-columns: 1fr 1fr; }
+  }
 </style>
 </head>
 <body>
 
 <header>
-  <span>🚌</span>
-  <div><h1>TranspoBot</h1><small>Assistant IA — Gestion de Transport</small></div>
+  <div class="hdr-icon">🚌</div>
+  <div>
+    <h1>TranspoBot</h1>
+    <small>Assistant IA — Gestion de Transport</small>
+  </div>
+  <div class="hdr-badge">
+    <span class="live-dot"></span>
+    En ligne
+  </div>
 </header>
 
 <div class="tabs">
@@ -81,8 +346,8 @@
 <!-- ONGLET 1 : Dashboard -->
 <div id="tab-dashboard" class="tab-content active">
   <div class="container">
-    <div>
-      <div class="card" style="margin-bottom:1rem">
+    <div style="display:flex;flex-direction:column;gap:1rem;">
+      <div class="card">
         <h2>📊 Tableau de bord</h2>
         <div class="stats-grid" id="stats">
           <div class="stat"><div class="val">—</div><div class="lbl">Trajets terminés</div></div>
@@ -93,10 +358,10 @@
       </div>
       <div class="card">
         <h2>🕒 Trajets récents</h2>
-        <div class="results" id="trajets-table"><p style="color:#94a3b8;font-size:0.85rem">Chargement...</p></div>
+        <div class="results" id="trajets-table"><p style="color:#94a3b8;font-size:0.83rem">Chargement...</p></div>
       </div>
     </div>
-    <div class="card">
+    <div class="card" style="display:flex;flex-direction:column;">
       <h2>💬 Assistant TranspoBot</h2>
       <div class="suggestions">
         <button onclick="ask('Combien de trajets ont été effectués cette semaine ?')">Trajets cette semaine</button>
@@ -125,13 +390,13 @@
   <div class="container-full">
     <div class="card">
       <h2>🚌 Flotte de véhicules</h2>
-      <div style="display:flex; gap:0.5rem; margin-bottom:1rem; flex-wrap:wrap;">
-        <button onclick="filtrerVehicules('tous')" style="background:#1a56db;color:white;border:none;border-radius:20px;padding:0.3rem 0.9rem;cursor:pointer;">Tous</button>
-        <button onclick="filtrerVehicules('actif')" style="background:#dcfce7;color:#166534;border:1px solid #bbf7d0;border-radius:20px;padding:0.3rem 0.9rem;cursor:pointer;">Actifs</button>
-        <button onclick="filtrerVehicules('maintenance')" style="background:#fff7ed;color:#9a3412;border:1px solid #fed7aa;border-radius:20px;padding:0.3rem 0.9rem;cursor:pointer;">En maintenance</button>
-        <button onclick="filtrerVehicules('hors_service')" style="background:#fee2e2;color:#991b1b;border:1px solid #fecaca;border-radius:20px;padding:0.3rem 0.9rem;cursor:pointer;">Hors service</button>
+      <div class="filter-row">
+        <button class="fpill fp-blue"   onclick="filtrerVehicules('tous')">Tous</button>
+        <button class="fpill fp-green"  onclick="filtrerVehicules('actif')">Actifs</button>
+        <button class="fpill fp-orange" onclick="filtrerVehicules('maintenance')">En maintenance</button>
+        <button class="fpill fp-red"    onclick="filtrerVehicules('hors_service')">Hors service</button>
       </div>
-      <div class="vehicles-grid" id="vehicles-grid"><p style="color:#94a3b8;font-size:0.85rem">Chargement...</p></div>
+      <div class="vehicles-grid" id="vehicles-grid"><p style="color:#94a3b8;font-size:0.83rem">Chargement...</p></div>
     </div>
   </div>
 </div>
@@ -141,12 +406,12 @@
   <div class="container-full">
     <div class="card">
       <h2>👤 Liste des chauffeurs</h2>
-      <div style="display:flex; gap:0.5rem; margin-bottom:1rem;">
-        <button onclick="filtrerChauffeurs('tous')" style="background:#1a56db;color:white;border:none;border-radius:20px;padding:0.3rem 0.9rem;cursor:pointer;">Tous</button>
-        <button onclick="filtrerChauffeurs('disponible')" style="background:#dcfce7;color:#166534;border:1px solid #bbf7d0;border-radius:20px;padding:0.3rem 0.9rem;cursor:pointer;">Disponibles</button>
-        <button onclick="filtrerChauffeurs('indisponible')" style="background:#fee2e2;color:#991b1b;border:1px solid #fecaca;border-radius:20px;padding:0.3rem 0.9rem;cursor:pointer;">Indisponibles</button>
+      <div class="filter-row">
+        <button class="fpill fp-blue"  onclick="filtrerChauffeurs('tous')">Tous</button>
+        <button class="fpill fp-green" onclick="filtrerChauffeurs('disponible')">Disponibles</button>
+        <button class="fpill fp-red"   onclick="filtrerChauffeurs('indisponible')">Indisponibles</button>
       </div>
-      <div class="drivers-grid" id="drivers-grid"><p style="color:#94a3b8;font-size:0.85rem">Chargement...</p></div>
+      <div class="drivers-grid" id="drivers-grid"><p style="color:#94a3b8;font-size:0.83rem">Chargement...</p></div>
     </div>
   </div>
 </div>
@@ -154,7 +419,7 @@
 <!-- ONGLET 4 : Recettes -->
 <div id="tab-recettes" class="tab-content">
   <div class="container-full">
-    <div class="stats-grid" style="margin-bottom:1.5rem; grid-template-columns: repeat(3,1fr);">
+    <div class="recettes-stats">
       <div class="stat"><div class="val" id="recette-totale">—</div><div class="lbl">Recette totale (FCFA)</div></div>
       <div class="stat"><div class="val" id="recette-mois">—</div><div class="lbl">Ce mois-ci (FCFA)</div></div>
       <div class="stat"><div class="val" id="nb-passagers">—</div><div class="lbl">Total passagers</div></div>
