@@ -39,6 +39,7 @@ app.add_middleware(
 # ── Configuration ──────────────────────────────────────────────
 DB_CONFIG = {
     "host":     os.getenv("DB_HOST", "localhost"),
+    "port":     int(os.getenv("DB_PORT", "3306")),
     "user":     os.getenv("DB_USER", "transpobot"),
     "password": os.getenv("DB_PASSWORD", "transpobot123"),
     "database": os.getenv("DB_NAME", "transpobot"),
