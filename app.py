@@ -38,11 +38,11 @@ app.add_middleware(
 
 # ── Configuration ──────────────────────────────────────────────
 DB_CONFIG = {
-    "host":     os.getenv("DB_HOST", "localhost"),
-    "port":     int(os.getenv("DB_PORT", "3306")),
-    "user":     os.getenv("DB_USER", "transpobot"),
-    "password": os.getenv("DB_PASSWORD", "transpobot123"),
-    "database": os.getenv("DB_NAME", "transpobot"),
+    "host": os.getenv("MYSQLHOST"),
+    "user": os.getenv("MYSQLUSER"),
+    "password": os.getenv("MYSQLPASSWORD"),
+    "database": os.getenv("MYSQLDATABASE"),
+    "port": int(os.getenv("MYSQLPORT", 3306)),
 }
 
 LLM_API_KEY  = os.getenv("OPENAI_API_KEY", "")
