@@ -18,6 +18,17 @@ import httpx
 
 app = FastAPI(title="TranspoBot API", version="1.0.0")
 
+from fastapi.responses import FileResponse
+from fastapi.staticfiles import StaticFiles
+
+# servir les fichiers statiques (CSS, JS…)
+app.mount("/frontend", StaticFiles(directory="frontend"), name="frontend")
+
+# route principale → afficher index.html
+@app.get("/")
+def read_index():
+    return FileResponse("frontend/index.html")
+
 app.add_middleware(
     CORSMiddleware,
     allow_origins=["*"],
