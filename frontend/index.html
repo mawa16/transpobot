@@ -14,7 +14,6 @@
     color: #1e293b;
   }
 
-  /* ── HEADER ── */
   header {
     background: #1a56db;
     color: white;
@@ -31,18 +30,18 @@
     border-radius: 50%;
     display: flex; align-items: center; justify-content: center;
     font-size: 22px;
-    flex-shrink: 0;
   }
-  header h1 { font-size: 1.3rem; font-weight: 700; letter-spacing: -0.3px; }
+  header h1 { font-size: 1.3rem; font-weight: 700; }
   header small { font-size: 0.75rem; opacity: 0.72; }
   .hdr-badge {
     margin-left: auto;
     background: rgba(255,255,255,0.15);
-    border: 1px solid rgba(255,255,255,0.22);
     border-radius: 20px;
     padding: 5px 14px;
     font-size: 0.75rem;
-    display: flex; align-items: center; gap: 7px;
+    display: flex;
+    align-items: center;
+    gap: 7px;
   }
   .live-dot {
     width: 7px; height: 7px;
@@ -51,7 +50,6 @@
   }
   .year-selector {
     background: rgba(255,255,255,0.15);
-    border: 1px solid rgba(255,255,255,0.22);
     border-radius: 20px;
     padding: 5px 14px;
     display: flex;
@@ -63,7 +61,6 @@
     border: none;
     color: white;
     font-size: 0.9rem;
-    font-weight: 500;
     cursor: pointer;
     outline: none;
   }
@@ -71,12 +68,7 @@
     background: #1a56db;
     color: white;
   }
-  .year-selector label {
-    font-size: 0.75rem;
-    opacity: 0.8;
-  }
 
-  /* ── TABS ── */
   .tabs {
     background: white;
     border-bottom: 1px solid #e2e8f0;
@@ -95,8 +87,6 @@
     color: #64748b;
     border-bottom: 3px solid transparent;
     margin-bottom: -1px;
-    white-space: nowrap;
-    transition: color 0.18s, background 0.18s;
   }
   .tab-btn:hover { color: #1a56db; background: #f5f8ff; }
   .tab-btn.active { color: #1a56db; border-bottom-color: #1a56db; font-weight: 600; }
@@ -104,7 +94,6 @@
   .tab-content { display: none; }
   .tab-content.active { display: block; }
 
-  /* ── LAYOUT ── */
   .container {
     display: grid;
     grid-template-columns: minmax(0,1fr) minmax(0,2fr);
@@ -115,7 +104,6 @@
   }
   .container-full { padding: 1.2rem; max-width: 1400px; margin: 0 auto; }
 
-  /* ── CARDS ── */
   .card {
     background: white;
     border-radius: 14px;
@@ -133,7 +121,6 @@
     margin-bottom: 0.9rem;
   }
 
-  /* ── STATS ── */
   .stats-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 0.7rem; margin-bottom: 1rem; }
   .stat {
     background: #eff6ff;
@@ -145,14 +132,12 @@
   .stat .val { font-size: 1.75rem; font-weight: 700; color: #1a56db; line-height: 1.1; }
   .stat .lbl { font-size: 0.7rem; color: #64748b; margin-top: 4px; font-weight: 500; }
 
-  /* ── BADGES ── */
   .badge { display: inline-block; padding: 2px 9px; border-radius: 20px; font-size: 0.7rem; font-weight: 600; }
   .badge-green  { background: #dcfce7; color: #15803d; }
   .badge-orange { background: #fff7ed; color: #c2410c; }
   .badge-red    { background: #fee2e2; color: #b91c1c; }
   .badge-blue   { background: #dbeafe; color: #1d4ed8; }
 
-  /* ── TABLES ── */
   .results table { width: 100%; border-collapse: collapse; font-size: 0.83rem; }
   .results th {
     background: #1a56db;
@@ -162,12 +147,9 @@
     font-weight: 500;
     font-size: 0.75rem;
   }
-  .results th:first-child { border-radius: 8px 0 0 0; }
-  .results th:last-child  { border-radius: 0 8px 0 0; }
   .results td { padding: 0.5rem 0.7rem; border-bottom: 1px solid #f1f5f9; }
   .results tr:hover td { background: #f8fafc; }
 
-  /* ── CHAT ── */
   .chat-box {
     height: 400px;
     overflow-y: auto;
@@ -180,27 +162,24 @@
     flex-direction: column;
     gap: 0.55rem;
   }
-  .msg { }
   .msg.user { text-align: right; }
   .msg.bot  { text-align: left; }
   .msg.user .bubble {
     background: #1a56db;
     color: white;
     border-radius: 16px 16px 4px 16px;
-    margin-left: auto;
+    display: inline-block;
+    padding: 0.6rem 1rem;
+    max-width: 85%;
   }
   .msg.bot .bubble {
     background: white;
     border: 1px solid #e2e8f0;
     color: #1e293b;
     border-radius: 16px 16px 16px 4px;
-  }
-  .bubble {
     display: inline-block;
     padding: 0.6rem 1rem;
     max-width: 85%;
-    font-size: 0.875rem;
-    line-height: 1.55;
   }
   .sql-preview {
     background: #1e293b;
@@ -211,10 +190,8 @@
     border-radius: 6px;
     margin-top: 6px;
     white-space: pre-wrap;
-    text-align: left;
   }
 
-  /* ── SUGGESTIONS ── */
   .suggestions { display: flex; flex-wrap: wrap; gap: 0.35rem; margin-bottom: 0.9rem; }
   .suggestions button {
     background: #eff6ff;
@@ -224,11 +201,9 @@
     padding: 0.3rem 0.85rem;
     font-size: 0.75rem;
     cursor: pointer;
-    transition: background 0.15s;
   }
   .suggestions button:hover { background: #dbeafe; }
 
-  /* ── CHAT INPUT ── */
   .chat-input { display: flex; gap: 0.5rem; }
   .chat-input input {
     flex: 1;
@@ -237,7 +212,6 @@
     padding: 0.65rem 1rem;
     font-size: 0.9rem;
     outline: none;
-    transition: border-color 0.15s, box-shadow 0.15s;
   }
   .chat-input input:focus {
     border-color: #1a56db;
@@ -252,118 +226,45 @@
     cursor: pointer;
     font-size: 0.9rem;
     font-weight: 500;
-    transition: background 0.15s;
   }
   .chat-input button:hover { background: #1e40af; }
 
-  /* ── FILTER PILLS ── */
-  .filter-row { display: flex; gap: 0.4rem; margin-bottom: 1rem; flex-wrap: wrap; }
-  .fpill {
-    border-radius: 20px;
-    padding: 0.3rem 0.9rem;
-    font-size: 0.78rem;
-    font-weight: 500;
-    cursor: pointer;
-    transition: opacity 0.15s;
-    border: none;
-  }
-  .fpill:hover { opacity: 0.82; }
-  .fp-blue   { background: #1a56db; color: white; }
-  .fp-green  { background: #dcfce7; color: #15803d; border: 1px solid #bbf7d0; }
-  .fp-orange { background: #fff7ed; color: #c2410c; border: 1px solid #fed7aa; }
-  .fp-red    { background: #fee2e2; color: #b91c1c; border: 1px solid #fecaca; }
-
-  /* ── VEHICLES ── */
-  .vehicles-grid {
-    display: grid;
-    grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
-    gap: 1rem;
-    margin-top: 0.5rem;
-  }
-  .vehicle-card {
-    background: #f8fafc;
-    border: 1px solid #e2e8f0;
-    border-radius: 12px;
-    padding: 1rem;
-    transition: box-shadow 0.18s, transform 0.18s;
-  }
-  .vehicle-card:hover {
-    box-shadow: 0 6px 18px rgba(26,86,219,0.1);
-    transform: translateY(-2px);
-  }
-  .vehicle-card .immat { font-weight: 700; font-size: 0.95rem; color: #1a56db; margin-bottom: 0.5rem; }
-  .vehicle-card .info { font-size: 0.78rem; color: #64748b; margin-top: 0.3rem; }
-  .vehicle-card .info strong { color: #1e293b; }
-
-  /* ── DRIVERS ── */
-  .drivers-grid {
+  .vehicles-grid, .drivers-grid {
     display: grid;
     grid-template-columns: repeat(auto-fill, minmax(240px, 1fr));
     gap: 1rem;
     margin-top: 0.5rem;
   }
-  .driver-card {
+  .vehicle-card, .driver-card {
     background: #f8fafc;
     border: 1px solid #e2e8f0;
     border-radius: 12px;
     padding: 1rem;
-    display: flex;
-    align-items: center;
-    gap: 0.9rem;
-    transition: box-shadow 0.18s, transform 0.18s;
   }
-  .driver-card:hover {
-    box-shadow: 0 6px 18px rgba(26,86,219,0.1);
-    transform: translateY(-2px);
-  }
+  .vehicle-card .immat { font-weight: 700; font-size: 0.95rem; color: #1a56db; margin-bottom: 0.5rem; }
+  .vehicle-card .info { font-size: 0.78rem; color: #64748b; margin-top: 0.3rem; }
   .driver-avatar {
     width: 44px; height: 44px;
     border-radius: 50%;
     background: #1a56db;
     color: white;
-    display: flex; align-items: center; justify-content: center;
+    display: flex;
+    align-items: center;
+    justify-content: center;
     font-weight: 700;
     font-size: 0.95rem;
-    flex-shrink: 0;
   }
-  .driver-info .name { font-weight: 600; font-size: 0.875rem; color: #1e293b; }
+  .driver-info .name { font-weight: 600; font-size: 0.875rem; }
   .driver-info .detail { font-size: 0.75rem; color: #64748b; margin-top: 2px; }
+  .driver-card { display: flex; align-items: center; gap: 0.9rem; }
 
-  /* ── CHARTS ── */
   .chart-wrapper { position: relative; height: 280px; margin-top: 0.5rem; }
   .grid-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 1.2rem; margin-top: 1.2rem; }
-
-  /* ── RECETTES STATS ── */
-  .recettes-stats {
-    display: grid;
-    grid-template-columns: repeat(4, 1fr);
-    gap: 0.8rem;
-    margin-bottom: 1.2rem;
-  }
-  .month-filter {
-    display: flex;
-    gap: 0.5rem;
-    align-items: center;
-    margin-bottom: 1rem;
-    flex-wrap: wrap;
-  }
-  .month-filter select, .month-filter button {
-    padding: 0.5rem 1rem;
-    border-radius: 10px;
-    border: 1px solid #e2e8f0;
-    background: white;
-    cursor: pointer;
-  }
-  .month-filter button {
-    background: #1a56db;
-    color: white;
-    border: none;
-  }
+  .recettes-stats { display: grid; grid-template-columns: repeat(3, 1fr); gap: 0.8rem; margin-bottom: 1.2rem; }
 
   @media (max-width: 900px) {
     .container { grid-template-columns: 1fr; }
     .grid-2 { grid-template-columns: 1fr; }
-    .recettes-stats { grid-template-columns: 1fr 1fr; }
   }
 </style>
 </head>
@@ -379,8 +280,6 @@
     <label>📅 Année :</label>
     <select id="year-select" onchange="changeAnnee()">
       <option value="2026">2026</option>
-      <option value="2025">2025</option>
-      <option value="2024">2024</option>
     </select>
   </div>
   <div class="hdr-badge">
@@ -397,7 +296,6 @@
   <button class="tab-btn" onclick="showTab('chat', this)">💬 Assistant IA</button>
 </div>
 
-<!-- ONGLET 1 : Dashboard -->
 <div id="tab-dashboard" class="tab-content active">
   <div class="container">
     <div style="display:flex;flex-direction:column;gap:1rem;">
@@ -412,11 +310,303 @@
       </div>
       <div class="card">
         <h2>🕒 Trajets récents</h2>
-        <div class="results" id="trajets-table"><p style="color:#94a3b8;font-size:0.83rem">Chargement...</p></div>
+        <div class="results" id="trajets-table"><p>Chargement...</p></div>
       </div>
     </div>
-    <div class="card" style="display:flex;flex-direction:column;">
+    <div class="card">
       <h2>💬 Assistant TranspoBot</h2>
       <div class="suggestions">
         <button onclick="ask('Combien de trajets ont été effectués cette semaine ?')">Trajets cette semaine</button>
-        <button onclick="ask('Quel chauffeur a le plus de trajets ?')">
+        <button onclick="ask('Quel chauffeur a le plus de trajets ?')">Meilleur chauffeur</button>
+        <button onclick="ask('Quels véhicules sont en maintenance ?')">Véhicules en maintenance</button>
+        <button onclick="ask('Quelle est la recette totale du mois de mars 2026 ?')">Recette mars 2026</button>
+      </div>
+      <div class="chat-box" id="chat-box">
+        <div class="msg bot"><div class="bubble">👋 Bonjour ! Je suis TranspoBot. Posez-moi n'importe quelle question !</div></div>
+      </div>
+      <div class="chat-input">
+        <input type="text" id="user-input" placeholder="Ex: Combien de trajets ce mois-ci ?" onkeypress="if(event.key==='Enter') sendMessage()">
+        <button onclick="sendMessage()">Envoyer ➤</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div id="tab-vehicules" class="tab-content">
+  <div class="container-full">
+    <div class="card">
+      <h2>🚌 Flotte de véhicules</h2>
+      <div class="vehicles-grid" id="vehicles-grid"><p>Chargement...</p></div>
+    </div>
+  </div>
+</div>
+
+<div id="tab-chauffeurs" class="tab-content">
+  <div class="container-full">
+    <div class="card">
+      <h2>👤 Chauffeurs</h2>
+      <div class="drivers-grid" id="drivers-grid"><p>Chargement...</p></div>
+    </div>
+  </div>
+</div>
+
+<div id="tab-recettes" class="tab-content">
+  <div class="container-full">
+    <div class="recettes-stats">
+      <div class="stat"><div class="val" id="recette-totale">—</div><div class="lbl">Recette totale (FCFA)</div></div>
+      <div class="stat"><div class="val" id="recette-mois">—</div><div class="lbl">Ce mois-ci (FCFA)</div></div>
+      <div class="stat"><div class="val" id="nb-passagers">—</div><div class="lbl">Total passagers</div></div>
+    </div>
+    <div class="grid-2">
+      <div class="card">
+        <h2>📈 Recettes par mois</h2>
+        <div class="chart-wrapper"><canvas id="chart-recettes"></canvas></div>
+      </div>
+      <div class="card">
+        <h2>🗺️ Recettes par ligne</h2>
+        <div class="chart-wrapper"><canvas id="chart-lignes"></canvas></div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div id="tab-chat" class="tab-content">
+  <div class="container-full">
+    <div class="card">
+      <h2>💬 Assistant IA - Mode plein écran</h2>
+      <div class="chat-box" id="chat-box-2" style="height:500px">
+        <div class="msg bot"><div class="bubble">👋 Bonjour ! Je suis TranspoBot. Posez-moi vos questions !</div></div>
+      </div>
+      <div class="chat-input">
+        <input type="text" id="user-input-2" placeholder="Votre question..." onkeypress="if(event.key==='Enter') sendMessage2()">
+        <button onclick="sendMessage2()">Envoyer</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script>
+const API = window.location.origin;
+let allVehicules = [];
+let allChauffeurs = [];
+let chartRecettes = null;
+let chartLignes = null;
+let currentYear = 2026;
+
+async function loadAnneesDisponibles() {
+  try {
+    const response = await fetch(`${API}/api/annees-disponibles`);
+    if (response.ok) {
+      const annees = await response.json();
+      const select = document.getElementById('year-select');
+      select.innerHTML = '';
+      annees.forEach(annee => {
+        const option = document.createElement('option');
+        option.value = annee;
+        option.textContent = annee;
+        select.appendChild(option);
+      });
+      if (annees.length > 0) currentYear = annees[0];
+    }
+  } catch(e) { console.error('Erreur chargement années:', e); }
+}
+
+function changeAnnee() {
+  currentYear = parseInt(document.getElementById('year-select').value);
+  loadRecettes();
+}
+
+function showTab(name, el) {
+  document.querySelectorAll('.tab-content').forEach(t => t.classList.remove('active'));
+  document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
+  document.getElementById('tab-' + name).classList.add('active');
+  if (el) el.classList.add('active');
+  
+  if (name === 'vehicules' && allVehicules.length === 0) loadVehicules();
+  if (name === 'chauffeurs' && allChauffeurs.length === 0) loadChauffeurs();
+  if (name === 'recettes') loadRecettes();
+}
+
+async function loadStats() {
+  try {
+    const response = await fetch(`${API}/api/stats`);
+    const data = await response.json();
+    document.getElementById('stats').innerHTML = `
+      <div class="stat"><div class="val">${data.total_trajets || 0}</div><div class="lbl">Trajets terminés</div></div>
+      <div class="stat"><div class="val">${data.trajets_en_cours || 0}</div><div class="lbl">En cours</div></div>
+      <div class="stat"><div class="val">${data.vehicules_actifs || 0}</div><div class="lbl">Véhicules actifs</div></div>
+      <div class="stat"><div class="val">${data.incidents_ouverts || 0}</div><div class="lbl">Incidents ouverts</div></div>
+    `;
+  } catch(e) { console.error('Stats error:', e); }
+}
+
+async function loadTrajets() {
+  try {
+    const response = await fetch(`${API}/api/trajets/recent`);
+    const data = await response.json();
+    if (!data.length) {
+      document.getElementById('trajets-table').innerHTML = '<p>Aucun trajet</p>';
+      return;
+    }
+    const rows = data.slice(0, 8).map(t => `
+      <tr>
+        <td>${t.ligne || '-'}</td>
+        <td>${t.chauffeur_nom || '-'}</td>
+        <td>${new Date(t.date_heure_depart).toLocaleDateString('fr')}</td>
+        <td><span class="badge ${t.statut==='termine'?'badge-green':t.statut==='en_cours'?'badge-orange':'badge-red'}">${t.statut}</span></td>
+      </tr>
+    `).join('');
+    document.getElementById('trajets-table').innerHTML = `
+      <table><thead><tr><th>Ligne</th><th>Chauffeur</th><th>Date</th><th>Statut</th></tr></thead><tbody>${rows}</tbody></table>
+    `;
+  } catch(e) { console.error('Trajets error:', e); }
+}
+
+async function loadVehicules() {
+  try {
+    const response = await fetch(`${API}/api/vehicules`);
+    allVehicules = await response.json();
+    const grid = document.getElementById('vehicles-grid');
+    grid.innerHTML = allVehicules.map(v => `
+      <div class="vehicle-card">
+        <div class="immat">🚌 ${v.immatriculation}</div>
+        <div><span class="badge ${v.statut==='actif'?'badge-green':v.statut==='maintenance'?'badge-orange':'badge-red'}">${v.statut}</span></div>
+        <div class="info">Capacité: ${v.capacite} places</div>
+        <div class="info">Kilométrage: ${(v.kilometrage || 0).toLocaleString('fr')} km</div>
+      </div>
+    `).join('');
+  } catch(e) { console.error('Vehicules error:', e); }
+}
+
+async function loadChauffeurs() {
+  try {
+    const response = await fetch(`${API}/api/chauffeurs`);
+    allChauffeurs = await response.json();
+    const grid = document.getElementById('drivers-grid');
+    grid.innerHTML = allChauffeurs.map(c => `
+      <div class="driver-card">
+        <div class="driver-avatar">${(c.prenom[0] + c.nom[0]).toUpperCase()}</div>
+        <div class="driver-info">
+          <div class="name">${c.prenom} ${c.nom}</div>
+          <div class="detail">Permis ${c.categorie_permis || '-'}</div>
+          <div class="detail"><span class="badge ${c.disponibilite ? 'badge-green' : 'badge-red'}">${c.disponibilite ? 'Disponible' : 'Indisponible'}</span></div>
+        </div>
+      </div>
+    `).join('');
+  } catch(e) { console.error('Chauffeurs error:', e); }
+}
+
+async function loadRecettes() {
+  try {
+    const statsResp = await fetch(`${API}/api/stats`);
+    const stats = await statsResp.json();
+    document.getElementById('recette-totale').textContent = (stats.recette_totale || 0).toLocaleString('fr');
+    document.getElementById('recette-mois').textContent = (stats.recette_mois || 0).toLocaleString('fr');
+    document.getElementById('nb-passagers').textContent = (stats.total_passagers || 0).toLocaleString('fr');
+    
+    const moisResp = await fetch(`${API}/api/stats/recettes-par-mois?annee=${currentYear}`);
+    const moisData = await moisResp.json();
+    
+    const ctx1 = document.getElementById('chart-recettes').getContext('2d');
+    if (chartRecettes) chartRecettes.destroy();
+    chartRecettes = new Chart(ctx1, {
+      type: 'bar',
+      data: {
+        labels: moisData.mois_labels || ['Jan','Fév','Mar','Avr','Mai','Juin','Juil','Aoû','Sep','Oct','Nov','Déc'],
+        datasets: [{ label: 'Recettes (FCFA)', data: moisData.recettes || [], backgroundColor: '#1a56db', borderRadius: 6 }]
+      },
+      options: { responsive: true, maintainAspectRatio: false, scales: { y: { beginAtZero: true, ticks: { callback: v => v.toLocaleString('fr') } } } }
+    });
+    
+    const lignesResp = await fetch(`${API}/api/stats/recettes-par-ligne?annee=${currentYear}`);
+    const lignesData = await lignesResp.json();
+    
+    const ctx2 = document.getElementById('chart-lignes').getContext('2d');
+    if (chartLignes) chartLignes.destroy();
+    chartLignes = new Chart(ctx2, {
+      type: 'doughnut',
+      data: {
+        labels: lignesData.map(l => l.ligne),
+        datasets: [{ data: lignesData.map(l => l.recette), backgroundColor: ['#1a56db', '#0ea5e9', '#6366f1', '#8b5cf6'] }]
+      },
+      options: { responsive: true, maintainAspectRatio: false, plugins: { legend: { position: 'bottom' } } }
+    });
+  } catch(e) { console.error('Recettes error:', e); }
+}
+
+function addMessage(role, text, sql = null) {
+  const box = document.getElementById('chat-box');
+  const div = document.createElement('div');
+  div.className = `msg ${role}`;
+  div.innerHTML = `<div class="bubble">${text}${sql ? `<div class="sql-preview">${sql}</div>` : ''}</div>`;
+  box.appendChild(div);
+  box.scrollTop = box.scrollHeight;
+}
+
+async function sendMessage() {
+  const input = document.getElementById('user-input');
+  const question = input.value.trim();
+  if (!question) return;
+  input.value = '';
+  addMessage('user', question);
+  addMessage('bot', '⏳ Analyse...');
+  try {
+    const response = await fetch(`${API}/api/chat`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ question })
+    });
+    const data = await response.json();
+    document.querySelector('#chat-box .msg.bot:last-child').remove();
+    addMessage('bot', data.answer || 'Réponse reçue', data.sql);
+  } catch(e) {
+    document.querySelector('#chat-box .msg.bot:last-child').remove();
+    addMessage('bot', '❌ Erreur de connexion');
+  }
+}
+
+function addMessage2(role, text, sql = null) {
+  const box = document.getElementById('chat-box-2');
+  const div = document.createElement('div');
+  div.className = `msg ${role}`;
+  div.innerHTML = `<div class="bubble">${text}${sql ? `<div class="sql-preview">${sql}</div>` : ''}</div>`;
+  box.appendChild(div);
+  box.scrollTop = box.scrollHeight;
+}
+
+async function sendMessage2() {
+  const input = document.getElementById('user-input-2');
+  const question = input.value.trim();
+  if (!question) return;
+  input.value = '';
+  addMessage2('user', question);
+  addMessage2('bot', '⏳ Analyse...');
+  try {
+    const response = await fetch(`${API}/api/chat`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ question })
+    });
+    const data = await response.json();
+    document.querySelector('#chat-box-2 .msg.bot:last-child').remove();
+    addMessage2('bot', data.answer || 'Réponse reçue', data.sql);
+  } catch(e) {
+    document.querySelector('#chat-box-2 .msg.bot:last-child').remove();
+    addMessage2('bot', '❌ Erreur de connexion');
+  }
+}
+
+function ask(q) {
+  document.getElementById('user-input').value = q;
+  sendMessage();
+}
+
+loadAnneesDisponibles();
+loadStats();
+loadTrajets();
+loadVehicules();
+loadChauffeurs();
+loadRecettes();
+</script>
+</body>
+</html>
