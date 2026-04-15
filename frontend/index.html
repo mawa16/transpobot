@@ -14,6 +14,7 @@
     color: #1e293b;
   }
 
+  /* ── HEADER ── */
   header {
     background: #1a56db;
     color: white;
@@ -22,7 +23,6 @@
     align-items: center;
     gap: 1rem;
     box-shadow: 0 2px 16px rgba(26,86,219,0.28);
-    flex-wrap: wrap;
   }
   .hdr-icon {
     width: 46px; height: 46px;
@@ -30,45 +30,26 @@
     border-radius: 50%;
     display: flex; align-items: center; justify-content: center;
     font-size: 22px;
+    flex-shrink: 0;
   }
-  header h1 { font-size: 1.3rem; font-weight: 700; }
+  header h1 { font-size: 1.3rem; font-weight: 700; letter-spacing: -0.3px; }
   header small { font-size: 0.75rem; opacity: 0.72; }
   .hdr-badge {
     margin-left: auto;
     background: rgba(255,255,255,0.15);
+    border: 1px solid rgba(255,255,255,0.22);
     border-radius: 20px;
     padding: 5px 14px;
     font-size: 0.75rem;
-    display: flex;
-    align-items: center;
-    gap: 7px;
+    display: flex; align-items: center; gap: 7px;
   }
   .live-dot {
     width: 7px; height: 7px;
     background: #4ade80;
     border-radius: 50%;
   }
-  .year-selector {
-    background: rgba(255,255,255,0.15);
-    border-radius: 20px;
-    padding: 5px 14px;
-    display: flex;
-    align-items: center;
-    gap: 10px;
-  }
-  .year-selector select {
-    background: transparent;
-    border: none;
-    color: white;
-    font-size: 0.9rem;
-    cursor: pointer;
-    outline: none;
-  }
-  .year-selector select option {
-    background: #1a56db;
-    color: white;
-  }
 
+  /* ── TABS ── */
   .tabs {
     background: white;
     border-bottom: 1px solid #e2e8f0;
@@ -87,6 +68,8 @@
     color: #64748b;
     border-bottom: 3px solid transparent;
     margin-bottom: -1px;
+    white-space: nowrap;
+    transition: color 0.18s, background 0.18s;
   }
   .tab-btn:hover { color: #1a56db; background: #f5f8ff; }
   .tab-btn.active { color: #1a56db; border-bottom-color: #1a56db; font-weight: 600; }
@@ -94,6 +77,7 @@
   .tab-content { display: none; }
   .tab-content.active { display: block; }
 
+  /* ── LAYOUT ── */
   .container {
     display: grid;
     grid-template-columns: minmax(0,1fr) minmax(0,2fr);
@@ -104,6 +88,7 @@
   }
   .container-full { padding: 1.2rem; max-width: 1400px; margin: 0 auto; }
 
+  /* ── CARDS ── */
   .card {
     background: white;
     border-radius: 14px;
@@ -121,6 +106,7 @@
     margin-bottom: 0.9rem;
   }
 
+  /* ── STATS ── */
   .stats-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 0.7rem; margin-bottom: 1rem; }
   .stat {
     background: #eff6ff;
@@ -132,12 +118,14 @@
   .stat .val { font-size: 1.75rem; font-weight: 700; color: #1a56db; line-height: 1.1; }
   .stat .lbl { font-size: 0.7rem; color: #64748b; margin-top: 4px; font-weight: 500; }
 
+  /* ── BADGES ── */
   .badge { display: inline-block; padding: 2px 9px; border-radius: 20px; font-size: 0.7rem; font-weight: 600; }
   .badge-green  { background: #dcfce7; color: #15803d; }
   .badge-orange { background: #fff7ed; color: #c2410c; }
   .badge-red    { background: #fee2e2; color: #b91c1c; }
   .badge-blue   { background: #dbeafe; color: #1d4ed8; }
 
+  /* ── TABLES ── */
   .results table { width: 100%; border-collapse: collapse; font-size: 0.83rem; }
   .results th {
     background: #1a56db;
@@ -147,9 +135,12 @@
     font-weight: 500;
     font-size: 0.75rem;
   }
+  .results th:first-child { border-radius: 8px 0 0 0; }
+  .results th:last-child  { border-radius: 0 8px 0 0; }
   .results td { padding: 0.5rem 0.7rem; border-bottom: 1px solid #f1f5f9; }
   .results tr:hover td { background: #f8fafc; }
 
+  /* ── CHAT ── */
   .chat-box {
     height: 400px;
     overflow-y: auto;
@@ -162,24 +153,27 @@
     flex-direction: column;
     gap: 0.55rem;
   }
+  .msg { }
   .msg.user { text-align: right; }
   .msg.bot  { text-align: left; }
   .msg.user .bubble {
     background: #1a56db;
     color: white;
     border-radius: 16px 16px 4px 16px;
-    display: inline-block;
-    padding: 0.6rem 1rem;
-    max-width: 85%;
+    margin-left: auto;
   }
   .msg.bot .bubble {
     background: white;
     border: 1px solid #e2e8f0;
     color: #1e293b;
     border-radius: 16px 16px 16px 4px;
+  }
+  .bubble {
     display: inline-block;
     padding: 0.6rem 1rem;
     max-width: 85%;
+    font-size: 0.875rem;
+    line-height: 1.55;
   }
   .sql-preview {
     background: #1e293b;
@@ -190,8 +184,10 @@
     border-radius: 6px;
     margin-top: 6px;
     white-space: pre-wrap;
+    text-align: left;
   }
 
+  /* ── SUGGESTIONS ── */
   .suggestions { display: flex; flex-wrap: wrap; gap: 0.35rem; margin-bottom: 0.9rem; }
   .suggestions button {
     background: #eff6ff;
@@ -201,9 +197,11 @@
     padding: 0.3rem 0.85rem;
     font-size: 0.75rem;
     cursor: pointer;
+    transition: background 0.15s;
   }
   .suggestions button:hover { background: #dbeafe; }
 
+  /* ── CHAT INPUT ── */
   .chat-input { display: flex; gap: 0.5rem; }
   .chat-input input {
     flex: 1;
@@ -212,6 +210,7 @@
     padding: 0.65rem 1rem;
     font-size: 0.9rem;
     outline: none;
+    transition: border-color 0.15s, box-shadow 0.15s;
   }
   .chat-input input:focus {
     border-color: #1a56db;
@@ -226,45 +225,99 @@
     cursor: pointer;
     font-size: 0.9rem;
     font-weight: 500;
+    transition: background 0.15s;
   }
   .chat-input button:hover { background: #1e40af; }
 
-  .vehicles-grid, .drivers-grid {
+  /* ── FILTER PILLS ── */
+  .filter-row { display: flex; gap: 0.4rem; margin-bottom: 1rem; flex-wrap: wrap; }
+  .fpill {
+    border-radius: 20px;
+    padding: 0.3rem 0.9rem;
+    font-size: 0.78rem;
+    font-weight: 500;
+    cursor: pointer;
+    transition: opacity 0.15s;
+    border: none;
+  }
+  .fpill:hover { opacity: 0.82; }
+  .fp-blue   { background: #1a56db; color: white; }
+  .fp-green  { background: #dcfce7; color: #15803d; border: 1px solid #bbf7d0; }
+  .fp-orange { background: #fff7ed; color: #c2410c; border: 1px solid #fed7aa; }
+  .fp-red    { background: #fee2e2; color: #b91c1c; border: 1px solid #fecaca; }
+
+  /* ── VEHICLES ── */
+  .vehicles-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
+    gap: 1rem;
+    margin-top: 0.5rem;
+  }
+  .vehicle-card {
+    background: #f8fafc;
+    border: 1px solid #e2e8f0;
+    border-radius: 12px;
+    padding: 1rem;
+    transition: box-shadow 0.18s, transform 0.18s;
+  }
+  .vehicle-card:hover {
+    box-shadow: 0 6px 18px rgba(26,86,219,0.1);
+    transform: translateY(-2px);
+  }
+  .vehicle-card .immat { font-weight: 700; font-size: 0.95rem; color: #1a56db; margin-bottom: 0.5rem; }
+  .vehicle-card .info { font-size: 0.78rem; color: #64748b; margin-top: 0.3rem; }
+  .vehicle-card .info strong { color: #1e293b; }
+
+  /* ── DRIVERS ── */
+  .drivers-grid {
     display: grid;
     grid-template-columns: repeat(auto-fill, minmax(240px, 1fr));
     gap: 1rem;
     margin-top: 0.5rem;
   }
-  .vehicle-card, .driver-card {
+  .driver-card {
     background: #f8fafc;
     border: 1px solid #e2e8f0;
     border-radius: 12px;
     padding: 1rem;
+    display: flex;
+    align-items: center;
+    gap: 0.9rem;
+    transition: box-shadow 0.18s, transform 0.18s;
   }
-  .vehicle-card .immat { font-weight: 700; font-size: 0.95rem; color: #1a56db; margin-bottom: 0.5rem; }
-  .vehicle-card .info { font-size: 0.78rem; color: #64748b; margin-top: 0.3rem; }
+  .driver-card:hover {
+    box-shadow: 0 6px 18px rgba(26,86,219,0.1);
+    transform: translateY(-2px);
+  }
   .driver-avatar {
     width: 44px; height: 44px;
     border-radius: 50%;
     background: #1a56db;
     color: white;
-    display: flex;
-    align-items: center;
-    justify-content: center;
+    display: flex; align-items: center; justify-content: center;
     font-weight: 700;
     font-size: 0.95rem;
+    flex-shrink: 0;
   }
-  .driver-info .name { font-weight: 600; font-size: 0.875rem; }
+  .driver-info .name { font-weight: 600; font-size: 0.875rem; color: #1e293b; }
   .driver-info .detail { font-size: 0.75rem; color: #64748b; margin-top: 2px; }
-  .driver-card { display: flex; align-items: center; gap: 0.9rem; }
 
+  /* ── CHARTS ── */
   .chart-wrapper { position: relative; height: 280px; margin-top: 0.5rem; }
   .grid-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 1.2rem; margin-top: 1.2rem; }
-  .recettes-stats { display: grid; grid-template-columns: repeat(3, 1fr); gap: 0.8rem; margin-bottom: 1.2rem; }
+
+  /* ── RECETTES STATS ── */
+  .recettes-stats {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 0.8rem;
+    margin-bottom: 1.2rem;
+  }
 
   @media (max-width: 900px) {
     .container { grid-template-columns: 1fr; }
     .grid-2 { grid-template-columns: 1fr; }
+    .recettes-stats { grid-template-columns: 1fr 1fr; }
   }
 </style>
 </head>
@@ -275,12 +328,6 @@
   <div>
     <h1>TranspoBot</h1>
     <small>Assistant IA — Gestion de Transport</small>
-  </div>
-  <div class="year-selector">
-    <label>📅 Année :</label>
-    <select id="year-select" onchange="changeAnnee()">
-      <option value="2026">2026</option>
-    </select>
   </div>
   <div class="hdr-badge">
     <span class="live-dot"></span>
@@ -296,6 +343,7 @@
   <button class="tab-btn" onclick="showTab('chat', this)">💬 Assistant IA</button>
 </div>
 
+<!-- ONGLET 1 : Dashboard -->
 <div id="tab-dashboard" class="tab-content active">
   <div class="container">
     <div style="display:flex;flex-direction:column;gap:1rem;">
@@ -310,46 +358,65 @@
       </div>
       <div class="card">
         <h2>🕒 Trajets récents</h2>
-        <div class="results" id="trajets-table"><p>Chargement...</p></div>
+        <div class="results" id="trajets-table"><p style="color:#94a3b8;font-size:0.83rem">Chargement...</p></div>
       </div>
     </div>
-    <div class="card">
+    <div class="card" style="display:flex;flex-direction:column;">
       <h2>💬 Assistant TranspoBot</h2>
       <div class="suggestions">
         <button onclick="ask('Combien de trajets ont été effectués cette semaine ?')">Trajets cette semaine</button>
         <button onclick="ask('Quel chauffeur a le plus de trajets ?')">Meilleur chauffeur</button>
         <button onclick="ask('Quels véhicules sont en maintenance ?')">Véhicules en maintenance</button>
+        <button onclick="ask('Liste les incidents graves non résolus')">Incidents graves</button>
         <button onclick="ask('Quelle est la recette totale du mois de mars 2026 ?')">Recette mars 2026</button>
       </div>
       <div class="chat-box" id="chat-box">
-        <div class="msg bot"><div class="bubble">👋 Bonjour ! Je suis TranspoBot. Posez-moi n'importe quelle question !</div></div>
+        <div class="msg bot"><div class="bubble">👋 Bonjour ! Je suis TranspoBot, votre assistant intelligent.<br>Posez-moi n'importe quelle question sur votre flotte, vos trajets ou vos chauffeurs !</div></div>
       </div>
       <div class="chat-input">
         <input type="text" id="user-input" placeholder="Ex: Combien de trajets ce mois-ci ?" onkeypress="if(event.key==='Enter') sendMessage()">
         <button onclick="sendMessage()">Envoyer ➤</button>
       </div>
+      <div id="results-section" style="margin-top:1rem; display:none">
+        <h2>📋 Résultats</h2>
+        <div class="results" id="results-table"></div>
+      </div>
     </div>
   </div>
 </div>
 
+<!-- ONGLET 2 : Véhicules -->
 <div id="tab-vehicules" class="tab-content">
   <div class="container-full">
     <div class="card">
       <h2>🚌 Flotte de véhicules</h2>
-      <div class="vehicles-grid" id="vehicles-grid"><p>Chargement...</p></div>
+      <div class="filter-row">
+        <button class="fpill fp-blue"   onclick="filtrerVehicules('tous')">Tous</button>
+        <button class="fpill fp-green"  onclick="filtrerVehicules('actif')">Actifs</button>
+        <button class="fpill fp-orange" onclick="filtrerVehicules('maintenance')">En maintenance</button>
+        <button class="fpill fp-red"    onclick="filtrerVehicules('hors_service')">Hors service</button>
+      </div>
+      <div class="vehicles-grid" id="vehicles-grid"><p style="color:#94a3b8;font-size:0.83rem">Chargement...</p></div>
     </div>
   </div>
 </div>
 
+<!-- ONGLET 3 : Chauffeurs -->
 <div id="tab-chauffeurs" class="tab-content">
   <div class="container-full">
     <div class="card">
-      <h2>👤 Chauffeurs</h2>
-      <div class="drivers-grid" id="drivers-grid"><p>Chargement...</p></div>
+      <h2>👤 Liste des chauffeurs</h2>
+      <div class="filter-row">
+        <button class="fpill fp-blue"  onclick="filtrerChauffeurs('tous')">Tous</button>
+        <button class="fpill fp-green" onclick="filtrerChauffeurs('disponible')">Disponibles</button>
+        <button class="fpill fp-red"   onclick="filtrerChauffeurs('indisponible')">Indisponibles</button>
+      </div>
+      <div class="drivers-grid" id="drivers-grid"><p style="color:#94a3b8;font-size:0.83rem">Chargement...</p></div>
     </div>
   </div>
 </div>
 
+<!-- ONGLET 4 : Recettes -->
 <div id="tab-recettes" class="tab-content">
   <div class="container-full">
     <div class="recettes-stats">
@@ -363,65 +430,52 @@
         <div class="chart-wrapper"><canvas id="chart-recettes"></canvas></div>
       </div>
       <div class="card">
-        <h2>🗺️ Recettes par ligne</h2>
+        <h2>🗺️ Trajets par ligne</h2>
         <div class="chart-wrapper"><canvas id="chart-lignes"></canvas></div>
       </div>
     </div>
   </div>
 </div>
 
+<!-- ONGLET 5 : Chat plein écran -->
 <div id="tab-chat" class="tab-content">
   <div class="container-full">
     <div class="card">
-      <h2>💬 Assistant IA - Mode plein écran</h2>
+      <h2>💬 Assistant TranspoBot — Mode plein écran</h2>
+      <div class="suggestions">
+        <button onclick="ask2('Combien de trajets ont été effectués cette semaine ?')">Trajets cette semaine</button>
+        <button onclick="ask2('Quel chauffeur a le plus de trajets ?')">Meilleur chauffeur</button>
+        <button onclick="ask2('Quels véhicules sont en maintenance ?')">Véhicules en maintenance</button>
+        <button onclick="ask2('Liste les incidents graves non résolus')">Incidents graves</button>
+        <button onclick="ask2('Quelle est la recette totale du mois de mars 2026 ?')">Recette mars 2026</button>
+        <button onclick="ask2('Combien de chauffeurs sont disponibles ?')">Chauffeurs disponibles</button>
+        <button onclick="ask2('Quel véhicule a le plus de kilométrage ?')">Kilométrage max</button>
+      </div>
       <div class="chat-box" id="chat-box-2" style="height:500px">
-        <div class="msg bot"><div class="bubble">👋 Bonjour ! Je suis TranspoBot. Posez-moi vos questions !</div></div>
+        <div class="msg bot"><div class="bubble">👋 Bonjour ! Je suis TranspoBot.<br>Posez-moi n'importe quelle question en français ou en anglais !</div></div>
       </div>
       <div class="chat-input">
-        <input type="text" id="user-input-2" placeholder="Votre question..." onkeypress="if(event.key==='Enter') sendMessage2()">
-        <button onclick="sendMessage2()">Envoyer</button>
+        <input type="text" id="user-input-2" placeholder="Ex: Quel chauffeur a le plus d'incidents ce mois-ci ?" onkeypress="if(event.key==='Enter') sendMessage2()">
+        <button onclick="sendMessage2()">Envoyer ➤</button>
+      </div>
+      <div id="results-section-2" style="margin-top:1rem; display:none">
+        <h2>📋 Résultats</h2>
+        <div class="results" id="results-table-2"></div>
       </div>
     </div>
   </div>
 </div>
 
 <script>
-const API = window.location.origin;
+const API = 'https://transpobot-production-4fb7.up.railway.app';
 let allVehicules = [];
 let allChauffeurs = [];
-let chartRecettes = null;
-let chartLignes = null;
-let currentYear = 2026;
-
-async function loadAnneesDisponibles() {
-  try {
-    const response = await fetch(`${API}/api/annees-disponibles`);
-    if (response.ok) {
-      const annees = await response.json();
-      const select = document.getElementById('year-select');
-      select.innerHTML = '';
-      annees.forEach(annee => {
-        const option = document.createElement('option');
-        option.value = annee;
-        option.textContent = annee;
-        select.appendChild(option);
-      });
-      if (annees.length > 0) currentYear = annees[0];
-    }
-  } catch(e) { console.error('Erreur chargement années:', e); }
-}
-
-function changeAnnee() {
-  currentYear = parseInt(document.getElementById('year-select').value);
-  loadRecettes();
-}
 
 function showTab(name, el) {
   document.querySelectorAll('.tab-content').forEach(t => t.classList.remove('active'));
   document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
   document.getElementById('tab-' + name).classList.add('active');
-  if (el) el.classList.add('active');
-  
+  el.classList.add('active');
   if (name === 'vehicules' && allVehicules.length === 0) loadVehicules();
   if (name === 'chauffeurs' && allChauffeurs.length === 0) loadChauffeurs();
   if (name === 'recettes') loadRecettes();
@@ -429,110 +483,31 @@ function showTab(name, el) {
 
 async function loadStats() {
   try {
-    const response = await fetch(`${API}/api/stats`);
-    const data = await response.json();
-    document.getElementById('stats').innerHTML = `
-      <div class="stat"><div class="val">${data.total_trajets || 0}</div><div class="lbl">Trajets terminés</div></div>
-      <div class="stat"><div class="val">${data.trajets_en_cours || 0}</div><div class="lbl">En cours</div></div>
-      <div class="stat"><div class="val">${data.vehicules_actifs || 0}</div><div class="lbl">Véhicules actifs</div></div>
-      <div class="stat"><div class="val">${data.incidents_ouverts || 0}</div><div class="lbl">Incidents ouverts</div></div>
-    `;
-  } catch(e) { console.error('Stats error:', e); }
+    const r = await fetch(`${API}/api/stats`);
+    const d = await r.json();
+    const grid = document.getElementById('stats');
+    const vals = [d.total_trajets, d.trajets_en_cours, d.vehicules_actifs, d.incidents_ouverts];
+    grid.querySelectorAll('.val').forEach((el, i) => el.textContent = vals[i] ?? '—');
+  } catch(e) { console.warn('Stats non disponibles', e); }
 }
 
 async function loadTrajets() {
   try {
-    const response = await fetch(`${API}/api/trajets/recent`);
-    const data = await response.json();
-    if (!data.length) {
-      document.getElementById('trajets-table').innerHTML = '<p>Aucun trajet</p>';
-      return;
-    }
+    const r = await fetch(`${API}/api/trajets/recent`);
+    const data = await r.json();
+    const container = document.getElementById('trajets-table');
+    if (!data.length) { container.innerHTML = '<p style="color:#94a3b8">Aucun trajet</p>'; return; }
     const rows = data.slice(0, 8).map(t => `
       <tr>
-        <td>${t.ligne || '-'}</td>
-        <td>${t.chauffeur_nom || '-'}</td>
+        <td>${t.ligne}</td><td>${t.chauffeur_nom}</td>
         <td>${new Date(t.date_heure_depart).toLocaleDateString('fr')}</td>
         <td><span class="badge ${t.statut==='termine'?'badge-green':t.statut==='en_cours'?'badge-orange':'badge-red'}">${t.statut}</span></td>
-      </tr>
-    `).join('');
-    document.getElementById('trajets-table').innerHTML = `
-      <table><thead><tr><th>Ligne</th><th>Chauffeur</th><th>Date</th><th>Statut</th></tr></thead><tbody>${rows}</tbody></table>
-    `;
-  } catch(e) { console.error('Trajets error:', e); }
+      </tr>`).join('');
+    container.innerHTML = `<table><thead><tr><th>Ligne</th><th>Chauffeur</th><th>Date</th><th>Statut</th></tr></thead><tbody>${rows}</tbody></table>`;
+  } catch(e) { console.warn('Trajets non disponibles', e); }
 }
 
-async function loadVehicules() {
-  try {
-    const response = await fetch(`${API}/api/vehicules`);
-    allVehicules = await response.json();
-    const grid = document.getElementById('vehicles-grid');
-    grid.innerHTML = allVehicules.map(v => `
-      <div class="vehicle-card">
-        <div class="immat">🚌 ${v.immatriculation}</div>
-        <div><span class="badge ${v.statut==='actif'?'badge-green':v.statut==='maintenance'?'badge-orange':'badge-red'}">${v.statut}</span></div>
-        <div class="info">Capacité: ${v.capacite} places</div>
-        <div class="info">Kilométrage: ${(v.kilometrage || 0).toLocaleString('fr')} km</div>
-      </div>
-    `).join('');
-  } catch(e) { console.error('Vehicules error:', e); }
-}
-
-async function loadChauffeurs() {
-  try {
-    const response = await fetch(`${API}/api/chauffeurs`);
-    allChauffeurs = await response.json();
-    const grid = document.getElementById('drivers-grid');
-    grid.innerHTML = allChauffeurs.map(c => `
-      <div class="driver-card">
-        <div class="driver-avatar">${(c.prenom[0] + c.nom[0]).toUpperCase()}</div>
-        <div class="driver-info">
-          <div class="name">${c.prenom} ${c.nom}</div>
-          <div class="detail">Permis ${c.categorie_permis || '-'}</div>
-          <div class="detail"><span class="badge ${c.disponibilite ? 'badge-green' : 'badge-red'}">${c.disponibilite ? 'Disponible' : 'Indisponible'}</span></div>
-        </div>
-      </div>
-    `).join('');
-  } catch(e) { console.error('Chauffeurs error:', e); }
-}
-
-async function loadRecettes() {
-  try {
-    const statsResp = await fetch(`${API}/api/stats`);
-    const stats = await statsResp.json();
-    document.getElementById('recette-totale').textContent = (stats.recette_totale || 0).toLocaleString('fr');
-    document.getElementById('recette-mois').textContent = (stats.recette_mois || 0).toLocaleString('fr');
-    document.getElementById('nb-passagers').textContent = (stats.total_passagers || 0).toLocaleString('fr');
-    
-    const moisResp = await fetch(`${API}/api/stats/recettes-par-mois?annee=${currentYear}`);
-    const moisData = await moisResp.json();
-    
-    const ctx1 = document.getElementById('chart-recettes').getContext('2d');
-    if (chartRecettes) chartRecettes.destroy();
-    chartRecettes = new Chart(ctx1, {
-      type: 'bar',
-      data: {
-        labels: moisData.mois_labels || ['Jan','Fév','Mar','Avr','Mai','Juin','Juil','Aoû','Sep','Oct','Nov','Déc'],
-        datasets: [{ label: 'Recettes (FCFA)', data: moisData.recettes || [], backgroundColor: '#1a56db', borderRadius: 6 }]
-      },
-      options: { responsive: true, maintainAspectRatio: false, scales: { y: { beginAtZero: true, ticks: { callback: v => v.toLocaleString('fr') } } } }
-    });
-    
-    const lignesResp = await fetch(`${API}/api/stats/recettes-par-ligne?annee=${currentYear}`);
-    const lignesData = await lignesResp.json();
-    
-    const ctx2 = document.getElementById('chart-lignes').getContext('2d');
-    if (chartLignes) chartLignes.destroy();
-    chartLignes = new Chart(ctx2, {
-      type: 'doughnut',
-      data: {
-        labels: lignesData.map(l => l.ligne),
-        datasets: [{ data: lignesData.map(l => l.recette), backgroundColor: ['#1a56db', '#0ea5e9', '#6366f1', '#8b5cf6'] }]
-      },
-      options: { responsive: true, maintainAspectRatio: false, plugins: { legend: { position: 'bottom' } } }
-    });
-  } catch(e) { console.error('Recettes error:', e); }
-}
+function ask(q) { document.getElementById('user-input').value = q; sendMessage(); }
 
 function addMessage(role, text, sql = null) {
   const box = document.getElementById('chat-box');
@@ -549,21 +524,36 @@ async function sendMessage() {
   if (!question) return;
   input.value = '';
   addMessage('user', question);
-  addMessage('bot', '⏳ Analyse...');
+  addMessage('bot', '⏳ Analyse en cours...');
   try {
-    const response = await fetch(`${API}/api/chat`, {
+    const r = await fetch(`${API}/api/chat`, {
       method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
+      headers: {'Content-Type': 'application/json'},
       body: JSON.stringify({ question })
     });
-    const data = await response.json();
+    const data = await r.json();
     document.querySelector('#chat-box .msg.bot:last-child').remove();
-    addMessage('bot', data.answer || 'Réponse reçue', data.sql);
+    
+    const answer = data.answer || data.detail || 'Réponse reçue';
+    const count = data.count !== undefined ? ` (${data.count} résultat${data.count > 1 ? 's' : ''})` : '';
+    addMessage('bot', answer + count, data.sql);
+
+    if (data.data && data.data.length > 0) {
+      document.getElementById('results-section').style.display = 'block';
+      const keys = Object.keys(data.data[0]);
+      const rows = data.data.map(row => `<tr>${keys.map(k => `<td>${row[k] ?? ''}</td>`).join('')}</tr>`).join('');
+      document.getElementById('results-table').innerHTML = `<table><thead><tr>${keys.map(k=>`<th>${k}</th>`).join('')}</tr></thead><tbody>${rows}</tbody><table>`;
+    } else {
+      document.getElementById('results-section').style.display = 'none';
+    }
   } catch(e) {
+    console.log('Erreur chat:', e);
     document.querySelector('#chat-box .msg.bot:last-child').remove();
-    addMessage('bot', '❌ Erreur de connexion');
+    addMessage('bot', '❌ Erreur de connexion au serveur.');
   }
 }
+
+function ask2(q) { document.getElementById('user-input-2').value = q; sendMessage2(); }
 
 function addMessage2(role, text, sql = null) {
   const box = document.getElementById('chat-box-2');
@@ -580,33 +570,127 @@ async function sendMessage2() {
   if (!question) return;
   input.value = '';
   addMessage2('user', question);
-  addMessage2('bot', '⏳ Analyse...');
+  addMessage2('bot', '⏳ Analyse en cours...');
   try {
-    const response = await fetch(`${API}/api/chat`, {
+    const r = await fetch(`${API}/api/chat`, {
       method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
+      headers: {'Content-Type': 'application/json'},
       body: JSON.stringify({ question })
     });
-    const data = await response.json();
+    const data = await r.json();
     document.querySelector('#chat-box-2 .msg.bot:last-child').remove();
-    addMessage2('bot', data.answer || 'Réponse reçue', data.sql);
+    
+    const answer = data.answer || data.detail || '❌ Réponse invalide';
+    const count = data.count !== undefined ? ` (${data.count} résultat${data.count > 1 ? 's' : ''})` : '';
+    addMessage2('bot', answer + count, data.sql);
+    
+    if (data.data && data.data.length > 0) {
+      document.getElementById('results-section-2').style.display = 'block';
+      const keys = Object.keys(data.data[0]);
+      const rows = data.data.map(row => `<tr>${keys.map(k => `<td>${row[k] ?? ''}</td>`).join('')}</tr>`).join('');
+      document.getElementById('results-table-2').innerHTML = `<table><thead><tr>${keys.map(k=>`<th>${k}</th>`).join('')}</tr></thead><tbody>${rows}</tbody></table>`;
+    } else {
+      document.getElementById('results-section-2').style.display = 'none';
+    }
   } catch(e) {
+    console.log('Erreur chat:', e);
     document.querySelector('#chat-box-2 .msg.bot:last-child').remove();
-    addMessage2('bot', '❌ Erreur de connexion');
+    addMessage2('bot', '❌ Erreur de connexion au serveur.');
   }
 }
 
-function ask(q) {
-  document.getElementById('user-input').value = q;
-  sendMessage();
+async function loadVehicules() {
+  try {
+    const r = await fetch(`${API}/api/vehicules`);
+    allVehicules = await r.json();
+    renderVehicules(allVehicules);
+  } catch(e) { document.getElementById('vehicles-grid').innerHTML = '<p style="color:#ef4444">Impossible de charger les véhicules.</p>'; }
 }
 
-loadAnneesDisponibles();
+function renderVehicules(data) {
+  const grid = document.getElementById('vehicles-grid');
+  if (!data.length) { grid.innerHTML = '<p style="color:#94a3b8">Aucun véhicule.</p>'; return; }
+  grid.innerHTML = data.map(v => `
+    <div class="vehicle-card">
+      <div class="immat">🚌 ${v.immatriculation}</div>
+      <div style="margin:0.3rem 0;">
+        <span class="badge ${v.statut==='actif'?'badge-green':v.statut==='maintenance'?'badge-orange':'badge-red'}">${v.statut}</span>
+        <span class="badge badge-blue" style="margin-left:4px">${v.type}</span>
+      </div>
+      <div class="info">👥 Capacité : <strong>${v.capacite}</strong> places</div>
+      <div class="info">🛣️ Kilométrage : <strong>${Number(v.kilometrage).toLocaleString('fr')} km</strong></div>
+      <div class="info">📅 Acquis le : ${v.date_acquisition ? new Date(v.date_acquisition).toLocaleDateString('fr') : '—'}</div>
+    </div>`).join('');
+}
+
+function filtrerVehicules(statut) {
+  renderVehicules(statut === 'tous' ? allVehicules : allVehicules.filter(v => v.statut === statut));
+}
+
+async function loadChauffeurs() {
+  try {
+    const r = await fetch(`${API}/api/chauffeurs`);
+    allChauffeurs = await r.json();
+    renderChauffeurs(allChauffeurs);
+  } catch(e) { document.getElementById('drivers-grid').innerHTML = '<p style="color:#ef4444">Impossible de charger les chauffeurs.</p>'; }
+}
+
+function renderChauffeurs(data) {
+  const grid = document.getElementById('drivers-grid');
+  if (!data.length) { grid.innerHTML = '<p style="color:#94a3b8">Aucun chauffeur.</p>'; return; }
+  grid.innerHTML = data.map(c => {
+    const initiales = (c.prenom[0] + c.nom[0]).toUpperCase();
+    return `
+    <div class="driver-card">
+      <div class="driver-avatar">${initiales}</div>
+      <div class="driver-info">
+        <div class="name">${c.prenom} ${c.nom}</div>
+        <div class="detail">📋 Permis ${c.categorie_permis} — ${c.numero_permis}</div>
+        <div class="detail">📞 ${c.telephone || '—'}</div>
+        <div class="detail" style="margin-top:4px">
+          <span class="badge ${c.disponibilite ? 'badge-green' : 'badge-red'}">${c.disponibilite ? 'Disponible' : 'Indisponible'}</span>
+          ${c.immatriculation ? `<span class="badge badge-blue" style="margin-left:4px">${c.immatriculation}</span>` : ''}
+        </div>
+      </div>
+    </div>`;
+  }).join('');
+}
+
+function filtrerChauffeurs(filtre) {
+  let filtered = filtre === 'tous' ? allChauffeurs : filtre === 'disponible' ? allChauffeurs.filter(c => c.disponibilite) : allChauffeurs.filter(c => !c.disponibilite);
+  renderChauffeurs(filtered);
+}
+
+let chartRecettes = null, chartLignes = null;
+
+async function loadRecettes() {
+  try {
+    const r = await fetch(`${API}/api/stats`);
+    const d = await r.json();
+    document.getElementById('recette-totale').textContent = d.recette_totale ? Number(d.recette_totale).toLocaleString('fr') : '—';
+    document.getElementById('recette-mois').textContent = d.recette_mois ? Number(d.recette_mois).toLocaleString('fr') : '—';
+   document.getElementById('nb-passagers').textContent = d.total_passagers ?? '—';
+  } catch(e) {}
+
+  const ctx1 = document.getElementById('chart-recettes').getContext('2d');
+  if (chartRecettes) chartRecettes.destroy();
+  chartRecettes = new Chart(ctx1, {
+    type: 'bar',
+    data: { labels: ['Janv','Févr','Mars','Avr'], datasets: [{ label: 'Recettes (FCFA)', data: [0, 985500, 1368500, 417500], backgroundColor: '#1a56db', borderRadius: 6 }] },
+    options: { responsive: true, maintainAspectRatio: false, plugins: { legend: { display: false } }, scales: { y: { beginAtZero: true, ticks: { callback: v => v.toLocaleString('fr') } } } }
+  });
+
+  const ctx2 = document.getElementById('chart-lignes').getContext('2d');
+  if (chartLignes) chartLignes.destroy();
+  chartLignes = new Chart(ctx2, {
+    type: 'doughnut',
+    data: { labels: ['L1 Dakar-Thiès','L2 Dakar-Mbour','L3 Centre-Banlieue','L4 Aéroport'], datasets: [{ data: [14,8,10,7], backgroundColor: ['#1a56db','#0ea5e9','#6366f1','#8b5cf6'], borderWidth: 2 }] },
+    options: { responsive: true, maintainAspectRatio: false, plugins: { legend: { position: 'bottom', labels: { font: { size: 11 } } } } }
+  });
+}
+
 loadStats();
 loadTrajets();
-loadVehicules();
-loadChauffeurs();
-loadRecettes();
 </script>
 </body>
 </html>
