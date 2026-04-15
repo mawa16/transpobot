@@ -665,30 +665,95 @@ let chartRecettes = null, chartLignes = null;
 
 async function loadRecettes() {
   try {
+    // 🔹 Stats (haut)
     const r = await fetch(`${API}/api/stats`);
     const d = await r.json();
-    document.getElementById('recette-totale').textContent = d.recette_totale ? Number(d.recette_totale).toLocaleString('fr') : '—';
-    document.getElementById('recette-mois').textContent = d.recette_mois ? Number(d.recette_mois).toLocaleString('fr') : '—';
-   document.getElementById('nb-passagers').textContent = d.total_passagers ?? '—';
-  } catch(e) {}
 
-  const ctx1 = document.getElementById('chart-recettes').getContext('2d');
-  if (chartRecettes) chartRecettes.destroy();
-  chartRecettes = new Chart(ctx1, {
-    type: 'bar',
-    data: { labels: ['Janv','Févr','Mars','Avr'], datasets: [{ label: 'Recettes (FCFA)', data: [0, 985500, 1368500, 417500], backgroundColor: '#1a56db', borderRadius: 6 }] },
-    options: { responsive: true, maintainAspectRatio: false, plugins: { legend: { display: false } }, scales: { y: { beginAtZero: true, ticks: { callback: v => v.toLocaleString('fr') } } } }
-  });
+    document.getElementById('recette-totale').textContent =
+      d.recette_totale ? Number(d.recette_totale).toLocaleString('fr') : '—';
 
+    document.getElementById('recette-mois').textContent =
+      d.recette_mois ? Number(d.recette_mois).toLocaleString('fr') : '—';
+
+    document.getElementById('nb-passagers').textContent =
+      d.total_passagers ?? '—';
+
+  } catch (e) {
+    console.warn("Erreur stats:", e);
+  }
+
+  try {
+    // 🔹 📊 DONNÉES RÉELLES POUR LE GRAPHIQUE
+    const r2 = await fetch(`${API}/api/recettes/mois`);
+    const data = await r2.json();
+
+    // transformer les données
+    const labels = data.map(d => {
+      const mois = ["Janv","Févr","Mars","Avr","Mai","Juin","Juil","Août","Sept","Oct","Nov","Déc"];
+      return mois[d.mois - 1];
+    });
+
+    const values = data.map(d => d.total);
+
+    const ctx1 = document.getElementById('chart-recettes').getContext('2d');
+    if (chartRecettes) chartRecettes.destroy();
+
+    chartRecettes = new Chart(ctx1, {
+      type: 'bar',
+      data: {
+        labels: labels,
+        datasets: [{
+          label: 'Recettes (FCFA)',
+          data: values,
+          backgroundColor: '#1a56db',
+          borderRadius: 6
+        }]
+      },
+      options: {
+        responsive: true,
+        maintainAspectRatio: false,
+        plugins: { legend: { display: false } },
+        scales: {
+          y: {
+            beginAtZero: true,
+            ticks: {
+              callback: v => v.toLocaleString('fr')
+            }
+          }
+        }
+      }
+    });
+
+  } catch (e) {
+    console.warn("Erreur graphique:", e);
+  }
+
+  // 🔹 graphique lignes (inchangé)
   const ctx2 = document.getElementById('chart-lignes').getContext('2d');
   if (chartLignes) chartLignes.destroy();
+
   chartLignes = new Chart(ctx2, {
     type: 'doughnut',
-    data: { labels: ['L1 Dakar-Thiès','L2 Dakar-Mbour','L3 Centre-Banlieue','L4 Aéroport'], datasets: [{ data: [14,8,10,7], backgroundColor: ['#1a56db','#0ea5e9','#6366f1','#8b5cf6'], borderWidth: 2 }] },
-    options: { responsive: true, maintainAspectRatio: false, plugins: { legend: { position: 'bottom', labels: { font: { size: 11 } } } } }
+    data: {
+      labels: ['L1 Dakar-Thiès','L2 Dakar-Mbour','L3 Centre-Banlieue','L4 Aéroport'],
+      datasets: [{
+        data: [14,8,10,7],
+        backgroundColor: ['#1a56db','#0ea5e9','#6366f1','#8b5cf6'],
+        borderWidth: 2
+      }]
+    },
+    options: {
+      responsive: true,
+      maintainAspectRatio: false,
+      plugins: {
+        legend: {
+          position: 'bottom',
+          labels: { font: { size: 11 } }
+        }
+      }
+    }
   });
 }
-
 loadStats();
 loadTrajets();
 </script>
