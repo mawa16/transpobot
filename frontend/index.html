@@ -444,6 +444,9 @@
   </div>
 </div>
 
+ <!-- ONGLET TARIFS -->
+<div id="tab-tarifs" class="tab-content"></div>
+ 
 <!-- ONGLET 5 : Chat plein écran -->
 <div id="tab-chat" class="tab-content">
   <div class="container-full">
@@ -788,6 +791,51 @@ window.addEventListener("load", () => {
     }
   }
 });
+async function loadTarifs() {
+  try {
+    const r = await fetch(`${API}/api/tarifs`);
+    const data = await r.json();
+
+    const container = document.getElementById('tab-tarifs');
+
+    if (!data.length) {
+      container.innerHTML = '<p style="color:#94a3b8">Aucun tarif</p>';
+      return;
+    }
+
+    const rows = data.map(t => `
+      <tr>
+        <td>${t.ligne}</td>
+        <td>${t.type_client}</td>
+        <td>${Number(t.prix).toLocaleString('fr')} FCFA</td>
+      </tr>
+    `).join('');
+
+    container.innerHTML = `
+      <div class="container-full">
+        <div class="card">
+          <h2>💵 Tarifs</h2>
+          <div class="results">
+            <table>
+              <thead>
+                <tr>
+                  <th>Ligne</th>
+                  <th>Type client</th>
+                  <th>Prix</th>
+                </tr>
+              </thead>
+              <tbody>${rows}</tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+    `;
+
+  } catch(e) {
+    document.getElementById('tab-tarifs').innerHTML =
+      '<p style="color:red">Erreur chargement tarifs</p>';
+  }
+}
  
 </script>
 </body>
