@@ -46,6 +46,11 @@ DB_CONFIG = {
     'cursorclass': pymysql.cursors.DictCursor
 }
 
+# Affiche les valeurs pour debug (à supprimer après)
+print(f"🔍 MYSQLHOST = {os.environ.get('MYSQLHOST', 'NON TROUVÉ')}")
+print(f"🔍 MYSQLUSER = {os.environ.get('MYSQLUSER', 'NON TROUVÉ')}")
+print(f"🔍 MYSQLDATABASE = {os.environ.get('MYSQLDATABASE', 'NON TROUVÉ')}")
+
 # Au démarrage de l'app, teste la connexion
 try:
     test_conn = pymysql.connect(**DB_CONFIG)
