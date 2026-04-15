@@ -189,7 +189,7 @@ FROM trajets
 WHERE statut='termine' 
 AND MONTH(date_heure_depart) = MONTH(CURRENT_DATE()) 
 AND YEAR(date_heure_depart) = YEAR(CURRENT_DATE())
-"""
+""",
         "total_passagers":   "SELECT COALESCE(SUM(nb_passagers),0) as n FROM trajets WHERE statut='termine'",
     }
     for key, sql in queries.items():
