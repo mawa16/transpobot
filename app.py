@@ -41,15 +41,21 @@ DB_CONFIG = {
     'host': os.environ.get('MYSQLHOST'),
     'user': os.environ.get('MYSQLUSER'),
     'password': os.environ.get('MYSQLPASSWORD'),
-    'database': os.environ.get('MYSQLDATABASE'),
+    'database': os.environ.get('MYSQLDATABASE') or os.environ.get('MYSQL_DATABASE') or 'railway',
     'port': int(os.environ.get('MYSQLPORT', 3306)),
-    'cursorclass': pymysql.cursors.DictCursor
+    'cursorclass': pymysql.cursors.DictCursor,
+    'autocommit': True,
+    'charset': 'utf8mb4'
 }
 
-# Affiche les valeurs pour debug (à supprimer après)
+# Affiche les valeurs pour debug
 print(f"🔍 MYSQLHOST = {os.environ.get('MYSQLHOST', 'NON TROUVÉ')}")
 print(f"🔍 MYSQLUSER = {os.environ.get('MYSQLUSER', 'NON TROUVÉ')}")
 print(f"🔍 MYSQLDATABASE = {os.environ.get('MYSQLDATABASE', 'NON TROUVÉ')}")
+
+# Force l'utilisation de l'authentification native
+import pymysql
+pymysql.install_as_MySQLdb()
 
 # Au démarrage de l'app, teste la connexion
 try:
@@ -60,7 +66,6 @@ try:
 except Exception as e:
     print(f"❌ Erreur MySQL: {e}")
     print("⚠️ L'application continue mais sans BDD...")
-
 LLM_API_KEY  = os.getenv("OPENAI_API_KEY", "")
 LLM_MODEL    = os.getenv("LLM_MODEL", "gpt-4o-mini")
 LLM_BASE_URL = os.getenv("LLM_BASE_URL", "https://api.openai.com/v1")
