@@ -1,31 +1,28 @@
 """
-TranspoBot — Backend FastAPI corrigé
+TranspoBot — Backend FastAPI
 Projet GLSi L3 — ESP/UCAD
 """
 
-from fastapi import FastAPI, HTTPException, Query
+from fastapi import FastAPI, HTTPException
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.staticfiles import StaticFiles
+from fastapi.responses import FileResponse
 from pydantic import BaseModel
 import pymysql
 import pymysql.cursors
 import os
 from dotenv import load_dotenv
-load_dotenv()
 import re
 import json
 import httpx
-from datetime import datetime
+
+load_dotenv()
 
 app = FastAPI(title="TranspoBot API", version="1.0.0")
 
-from fastapi.responses import FileResponse
-from fastapi.staticfiles import StaticFiles
-
-# servir les fichiers statiques (CSS, JS…)
+# ── Static files ─────────────────────────────
 app.mount("/frontend", StaticFiles(directory="frontend"), name="frontend")
 
-# route principale → afficher index.html
 @app.get("/")
 def read_index():
     return FileResponse("frontend/index.html")
@@ -37,100 +34,58 @@ app.add_middleware(
     allow_headers=["*"],
 )
 
-# ── Configuration ──────────────────────────────────────────────
+# ── DB CONFIG ────────────────────────────────
 DB_CONFIG = {
-    'host': os.environ.get('MYSQLHOST'),
-    'user': os.environ.get('MYSQLUSER'),
-    'password': os.environ.get('MYSQLPASSWORD'),
-    'database': os.environ.get('MYSQLDATABASE') or os.environ.get('MYSQL_DATABASE') or 'railway',
-    'port': int(os.environ.get('MYSQLPORT', 3306)),
+    'host': os.getenv("MYSQLHOST"),
+    'user': os.getenv("MYSQLUSER"),
+    'password': os.getenv("MYSQLPASSWORD"),
+    'database': os.getenv("MYSQLDATABASE") or "railway",
+    'port': int(os.getenv("MYSQLPORT", 3306)),
     'cursorclass': pymysql.cursors.DictCursor,
     'autocommit': True,
     'charset': 'utf8mb4'
 }
 
-# Affiche les valeurs pour debug
-print(f"🔍 MYSQLHOST = {os.environ.get('MYSQLHOST', 'NON TROUVÉ')}")
-print(f"🔍 MYSQLUSER = {os.environ.get('MYSQLUSER', 'NON TROUVÉ')}")
-print(f"🔍 MYSQLDATABASE = {os.environ.get('MYSQLDATABASE', 'NON TROUVÉ')}")
-
-# Force l'utilisation de l'authentification native
-import pymysql
-pymysql.install_as_MySQLdb()
-
-# Au démarrage de l'app, teste la connexion
-try:
-    test_conn = pymysql.connect(**DB_CONFIG)
-    print("✅ Connexion MySQL réussie !")
-    print(f"📊 Base: {DB_CONFIG['database']} sur {DB_CONFIG['host']}")
-    test_conn.close()
-except Exception as e:
-    print(f"❌ Erreur MySQL: {e}")
-    print("⚠️ L'application continue mais sans BDD...")
-
-LLM_API_KEY  = os.getenv("OPENAI_API_KEY", "")
-LLM_MODEL    = os.getenv("LLM_MODEL", "gpt-4o-mini")
-LLM_BASE_URL = os.getenv("LLM_BASE_URL", "https://api.openai.com/v1")
-
-
-# ── Schéma de la base (pour le prompt système) ─────────────────
-DB_SCHEMA = """
-Tables MySQL disponibles :
-
-vehicules(id, immatriculation, type[bus/minibus/taxi], capacite, statut[actif/maintenance/hors_service], kilometrage, date_acquisition)
-chauffeurs(id, nom, prenom, telephone, numero_permis, categorie_permis, disponibilite, vehicule_id, date_embauche)
-lignes(id, code, nom, origine, destination, distance_km, duree_minutes)
-tarifs(id, ligne_id, type_client[normal/etudiant/senior], prix)
-trajets(id, ligne_id, chauffeur_id, vehicule_id, date_heure_depart, date_heure_arrivee, statut[planifie/en_cours/termine/annule], nb_passagers, recette)
-incidents(id, trajet_id, type[panne/accident/retard/autre], description, gravite[faible/moyen/grave], date_incident, resolu)
-"""
-
-SYSTEM_PROMPT = f"""Tu es TranspoBot, assistant de gestion de transport.
-
-{DB_SCHEMA}
-
-RÈGLES :
-1. Génère UNIQUEMENT des requêtes SELECT.
-2. Réponds TOUJOURS en JSON :
-   {{"sql": "SELECT ...", "explication": "réponse courte et directe"}}
-3. L'explication doit être TRÈS COURTE et DIRECTE, max 1 phrase.
-   Exemples :
-   - "7 véhicules sont actifs."
-   - "DIOP Mamadou avec 8 trajets."
-   - "2 véhicules en maintenance : DK-9012-EF et DK-8901-ST."
-4. PAS de description de la requête SQL dans l'explication.
-5. Limite les résultats à 100 lignes avec LIMIT.
-6. IMPORTANT :
-   - Pour les recettes, toujours ajouter : statut = 'termine'
-"""
-
-# ── Connexion MySQL ────────────────────────────────────
 def get_db():
-    return pymysql.connect(
-        host=DB_CONFIG["host"],
-        user=DB_CONFIG["user"],
-        password=DB_CONFIG["password"],
-        database=DB_CONFIG["database"],
-        cursorclass=pymysql.cursors.DictCursor
-    )
+    return pymysql.connect(**DB_CONFIG)
 
-def execute_query(sql: str):
+def execute_query(sql):
     conn = get_db()
     try:
         with conn.cursor() as cursor:
             cursor.execute(sql)
-            results = cursor.fetchall()
-            # Convertir en liste de dicts sérialisables
-            return [
-                {k: (v.isoformat() if hasattr(v, 'isoformat') else v) 
-                 for k, v in row.items()}
-                for row in results
-            ]
+            return cursor.fetchall()
     finally:
         conn.close()
 
-# ── Appel LLM ─────────────────────────────────────────────────
-async def ask_llm(question: str) -> dict:
+# ── IA CONFIG ───────────────────────────────
+LLM_API_KEY  = os.getenv("OPENAI_API_KEY", "")
+LLM_MODEL    = os.getenv("LLM_MODEL", "gpt-4o-mini")
+LLM_BASE_URL = os.getenv("LLM_BASE_URL", "https://api.openai.com/v1")
+
+DB_SCHEMA = """
+vehicules(id, immatriculation, statut)
+chauffeurs(id, nom, prenom)
+trajets(id, date_heure_depart, statut, nb_passagers, recette)
+incidents(id, gravite, resolu)
+"""
+
+SYSTEM_PROMPT = f"""
+Tu es TranspoBot.
+
+{DB_SCHEMA}
+
+RÈGLES :
+- Génère uniquement des requêtes SELECT
+- Réponds en JSON : {{"sql":"...","explication":"..."}}
+- Explication courte
+- Toujours LIMIT 100
+- IMPORTANT :
+  - recettes => statut = 'termine'
+  - utiliser CURDATE() pour dates dynamiques
+"""
+
+async def ask_llm(question):
     async with httpx.AsyncClient() as client:
         response = await client.post(
             f"{LLM_BASE_URL}/chat/completions",
@@ -139,246 +94,57 @@ async def ask_llm(question: str) -> dict:
                 "model": LLM_MODEL,
                 "messages": [
                     {"role": "system", "content": SYSTEM_PROMPT},
-                    {"role": "user",   "content": question},
+                    {"role": "user", "content": question}
                 ],
-                "temperature": 0,
-            },
-            timeout=30,
+                "temperature": 0
+            }
         )
-        response.raise_for_status()
         content = response.json()["choices"][0]["message"]["content"]
-        # Nettoyer les balises markdown ```json
-        content = re.sub(r'```json\s*', '', content)
-        content = re.sub(r'```\s*', '', content)
-        content = content.strip()
-        match = re.search(r'\{.*\}', content, re.DOTALL)
-        if match:
-            return json.loads(match.group())
-        raise ValueError("Réponse LLM invalide")
+        content = re.sub(r'```.*?```', '', content, flags=re.DOTALL)
+        return json.loads(content)
 
-# ── Routes API ─────────────────────────────────────────────────
+# ── API CHAT ────────────────────────────────
 class ChatMessage(BaseModel):
     question: str
 
 @app.post("/api/chat")
 async def chat(msg: ChatMessage):
     try:
-        llm_response = await ask_llm(msg.question)
-        sql = llm_response.get("sql")
-        explication = llm_response.get("explication", "")
-        if not sql:
-            return {"answer": explication, "data": [], "sql": None}
-        data = execute_query(sql)
+        res = await ask_llm(msg.question)
+        sql = res.get("sql")
+        data = execute_query(sql) if sql else []
         return {
-            "answer": explication,
-            "data": data,
-            "sql": sql,
-            "count": len(data),
+            "answer": res.get("explication"),
+            "data": data
         }
     except Exception as e:
         raise HTTPException(status_code=500, detail=str(e))
 
+# ── STATS ───────────────────────────────────
 @app.get("/api/stats")
-def get_stats(mois: int = None, annee: int = None):
-    """
-    Retourne les statistiques globales
-    Si mois et annee sont fournis, retourne aussi les stats du mois
-    """
+def get_stats():
     stats = {}
-    
-    # Stats globales (indépendantes du mois)
-    queries_globales = {
-        "total_trajets":     "SELECT COUNT(*) as n FROM trajets WHERE statut='termine'",
-        "trajets_en_cours":  "SELECT COUNT(*) as n FROM trajets WHERE statut='en_cours'",
-        "vehicules_actifs":  "SELECT COUNT(*) as n FROM vehicules WHERE statut='actif'",
-        "incidents_ouverts": "SELECT COUNT(*) as n FROM incidents WHERE resolu=FALSE",
-        "total_passagers":   "SELECT COALESCE(SUM(nb_passagers),0) as n FROM trajets WHERE statut='termine'",
-        "recette_totale":    "SELECT COALESCE(SUM(recette),0) as n FROM trajets WHERE statut='termine'",
+
+    queries = {
+        "total_trajets": "SELECT COUNT(*) n FROM trajets WHERE statut='termine'",
+        "trajets_en_cours": "SELECT COUNT(*) n FROM trajets WHERE statut='en_cours'",
+        "vehicules_actifs": "SELECT COUNT(*) n FROM vehicules WHERE statut='actif'",
+        "incidents_ouverts": "SELECT COUNT(*) n FROM incidents WHERE resolu=FALSE",
+        "recette_totale": "SELECT SUM(recette) n FROM trajets WHERE statut='termine'",
+        "total_passagers": "SELECT SUM(nb_passagers) n FROM trajets WHERE statut='termine'",
+
+        # dynamique
+        "recette_mois": """
+        SELECT COALESCE(SUM(recette),0) n
+        FROM trajets
+        WHERE MONTH(date_heure_depart)=MONTH(CURDATE())
+        AND YEAR(date_heure_depart)=YEAR(CURDATE())
+        AND statut='termine'
+        """
     }
-    
-    for key, sql in queries_globales.items():
-        result = execute_query(sql)
-        stats[key] = result[0]["n"] if result else 0
-    
-    # Stats mensuelles (si mois et annee sont fournis)
-    if mois is not None and annee is not None:
-        queries_mensuelles = {
-            "recette_mois": f"""
-                SELECT COALESCE(SUM(recette),0) as n
-                FROM trajets
-                WHERE MONTH(date_heure_depart) = {mois}
-                AND YEAR(date_heure_depart) = {annee}
-                AND statut = 'termine'
-            """,
-            "trajets_mois": f"""
-                SELECT COUNT(*) as n
-                FROM trajets
-                WHERE MONTH(date_heure_depart) = {mois}
-                AND YEAR(date_heure_depart) = {annee}
-                AND statut = 'termine'
-            """,
-            "passagers_mois": f"""
-                SELECT COALESCE(SUM(nb_passagers),0) as n
-                FROM trajets
-                WHERE MONTH(date_heure_depart) = {mois}
-                AND YEAR(date_heure_depart) = {annee}
-                AND statut = 'termine'
-            """
-        }
-        
-        for key, sql in queries_mensuelles.items():
-            result = execute_query(sql)
-            stats[key] = result[0]["n"] if result else 0
-    else:
-        # Si pas de mois spécifié, on prend le mois courant
-        current_month = datetime.now().month
-        current_year = datetime.now().year
-        result = execute_query(f"""
-            SELECT COALESCE(SUM(recette),0) as n
-            FROM trajets
-            WHERE MONTH(date_heure_depart) = {current_month}
-            AND YEAR(date_heure_depart) = {current_year}
-            AND statut = 'termine'
-        """)
-        stats["recette_mois"] = result[0]["n"] if result else 0
-        stats["trajets_mois"] = stats["total_trajets"]
-        stats["passagers_mois"] = stats["total_passagers"]
-    
+
+    for k, q in queries.items():
+        res = execute_query(q)
+        stats[k] = res[0]["n"] if res and res[0]["n"] else 0
+
     return stats
-
-@app.get("/api/stats/mois/{mois}")
-def get_stats_mois(mois: int, annee: int = Query(default=datetime.now().year)):
-    """Retourne les stats pour un mois spécifique"""
-    sql_recette = f"""
-        SELECT COALESCE(SUM(recette), 0) as recette
-        FROM trajets
-        WHERE MONTH(date_heure_depart) = {mois}
-        AND YEAR(date_heure_depart) = {annee}
-        AND statut = 'termine'
-    """
-    sql_trajets = f"""
-        SELECT COUNT(*) as nb_trajets
-        FROM trajets
-        WHERE MONTH(date_heure_depart) = {mois}
-        AND YEAR(date_heure_depart) = {annee}
-        AND statut = 'termine'
-    """
-    sql_passagers = f"""
-        SELECT COALESCE(SUM(nb_passagers), 0) as passagers
-        FROM trajets
-        WHERE MONTH(date_heure_depart) = {mois}
-        AND YEAR(date_heure_depart) = {annee}
-        AND statut = 'termine'
-    """
-    
-    recette = execute_query(sql_recette)
-    trajets = execute_query(sql_trajets)
-    passagers = execute_query(sql_passagers)
-    
-    return {
-        "recette": recette[0]["recette"] if recette else 0,
-        "nb_trajets": trajets[0]["nb_trajets"] if trajets else 0,
-        "passagers": passagers[0]["passagers"] if passagers else 0,
-        "mois": mois,
-        "annee": annee
-    }
-
-@app.get("/api/stats/recettes-par-mois")
-def get_recettes_par_mois(annee: int = Query(default=datetime.now().year)):
-    """Retourne les recettes pour chaque mois d'une année"""
-    recettes = []
-    for mois in range(1, 13):
-        result = execute_query(f"""
-            SELECT COALESCE(SUM(recette), 0) as recette
-            FROM trajets
-            WHERE MONTH(date_heure_depart) = {mois}
-            AND YEAR(date_heure_depart) = {annee}
-            AND statut = 'termine'
-        """)
-        recettes.append(result[0]["recette"] if result else 0)
-    
-    return {
-        "annee": annee,
-        "recettes": recettes,
-        "mois_labels": ["Janv", "Févr", "Mars", "Avr", "Mai", "Juin", "Juil", "Août", "Sep", "Oct", "Nov", "Déc"]
-    }
-
-@app.get("/api/stats/recettes-par-ligne")
-def get_recettes_par_ligne(annee: int = Query(default=datetime.now().year), mois: int = None):
-    """Retourne les recettes par ligne pour une année ou un mois spécifique"""
-    where_clause = f"YEAR(t.date_heure_depart) = {annee}"
-    if mois:
-        where_clause += f" AND MONTH(t.date_heure_depart) = {mois}"
-    
-    sql = f"""
-        SELECT 
-            l.nom as ligne,
-            l.code,
-            COALESCE(SUM(t.recette), 0) as recette,
-            COUNT(t.id) as nb_trajets
-        FROM trajets t
-        JOIN lignes l ON t.ligne_id = l.id
-        WHERE {where_clause}
-        AND t.statut = 'termine'
-        GROUP BY l.id, l.nom, l.code
-        ORDER BY recette DESC
-    """
-    return execute_query(sql)
-
-@app.get("/api/annees-disponibles")
-def get_annees_disponibles():
-    """Retourne les années pour lesquelles il y a des données"""
-    result = execute_query("""
-        SELECT DISTINCT YEAR(date_heure_depart) as annee
-        FROM trajets
-        WHERE statut = 'termine'
-        ORDER BY annee DESC
-    """)
-    return [r["annee"] for r in result]
-
-@app.get("/api/vehicules")
-def get_vehicules():
-    return execute_query("SELECT * FROM vehicules ORDER BY immatriculation")
-
-@app.get("/api/chauffeurs")
-def get_chauffeurs():
-    return execute_query("""
-        SELECT c.*, v.immatriculation
-        FROM chauffeurs c
-        LEFT JOIN vehicules v ON c.vehicule_id = v.id
-        ORDER BY c.nom
-    """)
-
-@app.get("/api/trajets/recent")
-def get_trajets_recent(limit: int = 20):
-    return execute_query(f"""
-        SELECT t.*, l.nom as ligne, ch.nom as chauffeur_nom,
-               v.immatriculation
-        FROM trajets t
-        JOIN lignes l ON t.ligne_id = l.id
-        JOIN chauffeurs ch ON t.chauffeur_id = ch.id
-        JOIN vehicules v ON t.vehicule_id = v.id
-        ORDER BY t.date_heure_depart DESC
-        LIMIT {limit}
-    """)
-
-@app.get("/api/incidents")
-def get_incidents():
-    return execute_query("""
-        SELECT i.*, t.date_heure_depart, l.nom as ligne
-        FROM incidents i
-        JOIN trajets t ON i.trajet_id = t.id
-        JOIN lignes l ON t.ligne_id = l.id
-        ORDER BY i.date_incident DESC
-        LIMIT 20
-    """)
-
-@app.get("/health")
-def health():
-    return {"status": "ok", "app": "TranspoBot"}
-
-# ── Lancement ─────────────────────────────────────────────────
-if __name__ == "__main__":
-    import uvicorn
-    port = int(os.environ.get("PORT", 8000))
-    uvicorn.run("app:app", host="0.0.0.0", port=port, reload=False)
