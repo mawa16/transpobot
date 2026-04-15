@@ -244,7 +244,7 @@ def get_incidents():
         ORDER BY i.date_incident DESC
         LIMIT 20
     """)
-    @app.get("/api/tarifs")
+@app.get("/api/tarifs")
 def get_tarifs():
     return execute_query("""
         SELECT t.id, l.nom AS ligne, t.type_client, t.prix
