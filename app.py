@@ -98,6 +98,8 @@ RÈGLES :
    - "2 véhicules en maintenance : DK-9012-EF et DK-8901-ST."
 4. PAS de description de la requête SQL dans l'explication.
 5. Limite les résultats à 100 lignes avec LIMIT.
+6. IMPORTANT :
+   - Pour les recettes, toujours ajouter : statut = 'termine'
 """
 
 # ── Connexion MySQL ────────────────────────────────────
