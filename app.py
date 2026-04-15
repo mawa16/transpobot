@@ -98,6 +98,9 @@ RÈGLES :
    - "2 véhicules en maintenance : DK-9012-EF et DK-8901-ST."
 4. PAS de description de la requête SQL dans l'explication.
 5. Limite les résultats à 100 lignes avec LIMIT.
+6. Toujours filtrer les recettes avec statut='termine'
+7. Ne jamais inclure les trajets 'en_cours' ou 'annule' dans les recettes
+8. Pour les calculs par mois ou année, appliquer aussi ce filtre
 """
 
 # ── Connexion MySQL ────────────────────────────────────
