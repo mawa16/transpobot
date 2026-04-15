@@ -4,214 +4,181 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>TranspoBot — Assistant IA Transport</title>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.min.js"></script>
-
 <style>
-* { box-sizing: border-box; margin: 0; padding: 0; }
-
-body {
-  font-family: 'Segoe UI', sans-serif;
-  background: linear-gradient(135deg, #eef2ff, #f8fafc);
-  color: #1e293b;
-}
-
-/* HEADER */
-header {
-  background: linear-gradient(135deg, #1a56db, #6366f1);
-  color: white;
-  padding: 1rem 2rem;
-  display: flex;
-  align-items: center;
-  gap: 1rem;
-  box-shadow: 0 6px 30px rgba(79,70,229,0.35);
-}
-
-.hdr-icon {
-  width: 46px; height: 46px;
-  background: rgba(255,255,255,0.2);
-  border-radius: 50%;
-  display: flex; align-items: center; justify-content: center;
-  font-size: 22px;
-  backdrop-filter: blur(8px);
-}
-
-header h1 { font-size: 1.3rem; font-weight: 700; }
-header small { font-size: 0.75rem; opacity: 0.8; }
-
-.hdr-badge {
-  margin-left: auto;
-  background: rgba(255,255,255,0.2);
-  border-radius: 20px;
-  padding: 5px 14px;
-}
-
-.live-dot {
-  width: 7px; height: 7px;
-  background: #4ade80;
-  border-radius: 50%;
-}
-
-/* TABS */
-.tabs {
-  background: rgba(255,255,255,0.7);
-  backdrop-filter: blur(10px);
-  border-bottom: 1px solid #e2e8f0;
-  padding: 0 1.5rem;
-  display: flex;
-  overflow-x: auto;
-}
-
-.tab-btn {
-  padding: 0.85rem 1.3rem;
-  border: none;
-  background: none;
-  cursor: pointer;
-  color: #64748b;
-  border-bottom: 3px solid transparent;
-  transition: all 0.2s;
-}
-
-.tab-btn:hover {
-  color: #4f46e5;
-  background: rgba(99,102,241,0.08);
-}
-
-.tab-btn.active {
-  color: #4f46e5;
-  border-bottom-color: #4f46e5;
-  font-weight: 600;
-}
-
-/* LAYOUT */
-.container {
-  display: grid;
-  grid-template-columns: minmax(0,1fr) minmax(0,2fr);
-  gap: 1.2rem;
-  padding: 1.2rem;
-  max-width: 1400px;
-  margin: auto;
-}
-
-.container-full {
-  padding: 1.2rem;
-  max-width: 1400px;
-  margin: auto;
-}
-
-/* CARDS */
-.card {
-  background: rgba(255,255,255,0.8);
-  backdrop-filter: blur(14px);
-  border-radius: 16px;
-  padding: 1.2rem;
-  box-shadow: 0 10px 30px rgba(0,0,0,0.08);
-  transition: all 0.25s;
-}
-
-.card:hover {
-  transform: translateY(-5px);
-  box-shadow: 0 20px 50px rgba(79,70,229,0.25);
-}
-
-/* STATS */
-.stat {
-  background: linear-gradient(135deg, #dbeafe, #eef2ff);
-  border-radius: 12px;
-  padding: 1rem;
-  text-align: center;
-}
-
-.stat .val {
-  font-size: 1.6rem;
-  font-weight: bold;
-  color: #4f46e5;
-}
-
-/* TABLE */
-.results table { width: 100%; border-collapse: collapse; }
-
-.results th {
-  background: linear-gradient(135deg, #4f46e5, #1a56db);
-  color: white;
-  padding: 0.5rem;
-}
-
-.results td {
-  padding: 0.5rem;
-}
-
-.results tr:hover td {
-  background: #eef2ff;
-}
-
-/* CHAT */
-.chat-box {
-  height: 400px;
-  overflow-y: auto;
-  border-radius: 12px;
-  padding: 1rem;
-  background: linear-gradient(180deg, #f8fafc, #eef2ff);
-}
-
-.msg.user .bubble {
-  background: linear-gradient(135deg, #4f46e5, #1a56db);
-  color: white;
-}
-
-.msg.bot .bubble {
-  background: white;
-  box-shadow: 0 5px 15px rgba(0,0,0,0.05);
-}
-
-.bubble {
-  padding: 0.6rem 1rem;
-  border-radius: 16px;
-}
-
-/* INPUT */
-.chat-input input {
-  border-radius: 10px;
-  padding: 0.6rem;
-}
-
-.chat-input button {
-  background: linear-gradient(135deg, #4f46e5, #1a56db);
-  color: white;
-  border: none;
-  border-radius: 10px;
-  padding: 0.6rem 1rem;
-}
-
-/* VEHICLES / DRIVERS */
-.vehicle-card, .driver-card {
-  background: rgba(255,255,255,0.85);
-  border-radius: 12px;
-  padding: 1rem;
-  transition: 0.2s;
-}
-
-.vehicle-card:hover, .driver-card:hover {
-  transform: translateY(-3px);
-  box-shadow: 0 10px 25px rgba(99,102,241,0.2);
-}
-
-.driver-avatar {
-  background: linear-gradient(135deg, #4f46e5, #1a56db);
-  color: white;
-}
-
-/* SCROLL */
-::-webkit-scrollbar { width: 8px; }
-::-webkit-scrollbar-thumb {
-  background: #c7d2fe;
-  border-radius: 10px;
-}
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body { font-family: 'Segoe UI', sans-serif; background: #f0f4f8; color: #1a202c; }
+  header { background: #1a56db; color: white; padding: 1rem 2rem; display: flex; align-items: center; gap: 1rem; }
+  header h1 { font-size: 1.4rem; }
+  header span { font-size: 2rem; }
+  .container { display: grid; grid-template-columns: 1fr 2fr; gap: 1.5rem; padding: 1.5rem; max-width: 1400px; margin: 0 auto; }
+  .card { background: white; border-radius: 12px; padding: 1.2rem; box-shadow: 0 2px 8px rgba(0,0,0,0.08); }
+  .stats-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 0.8rem; margin-bottom: 1rem; }
+  .stat { background: #eff6ff; border-radius: 8px; padding: 0.8rem; text-align: center; }
+  .stat .val { font-size: 1.8rem; font-weight: bold; color: #1a56db; }
+  .stat .lbl { font-size: 0.75rem; color: #64748b; margin-top: 2px; }
+  /* Chat */
+  .chat-box { height: 400px; overflow-y: auto; border: 1px solid #e2e8f0; border-radius: 8px; padding: 1rem; margin-bottom: 1rem; background: #f8fafc; }
+  .msg { margin-bottom: 0.8rem; }
+  .msg.user .bubble { background: #1a56db; color: white; margin-left: auto; }
+  .msg.bot .bubble { background: white; border: 1px solid #e2e8f0; }
+  .bubble { display: inline-block; padding: 0.6rem 1rem; border-radius: 12px; max-width: 85%; font-size: 0.9rem; line-height: 1.5; }
+  .msg.user { text-align: right; }
+  .chat-input { display: flex; gap: 0.5rem; }
+  .chat-input input { flex: 1; border: 1px solid #e2e8f0; border-radius: 8px; padding: 0.7rem 1rem; font-size: 0.95rem; outline: none; }
+  .chat-input input:focus { border-color: #1a56db; }
+  .chat-input button { background: #1a56db; color: white; border: none; border-radius: 8px; padding: 0.7rem 1.2rem; cursor: pointer; font-size: 0.95rem; }
+  .chat-input button:hover { background: #1e40af; }
+  .sql-preview { background: #1e293b; color: #94a3b8; font-family: monospace; font-size: 0.78rem; padding: 0.6rem; border-radius: 6px; margin-top: 0.4rem; white-space: pre-wrap; }
+  /* Suggestions */
+  .suggestions { display: flex; flex-wrap: wrap; gap: 0.4rem; margin-bottom: 0.8rem; }
+  .suggestions button { background: #eff6ff; color: #1a56db; border: 1px solid #bfdbfe; border-radius: 20px; padding: 0.3rem 0.8rem; font-size: 0.8rem; cursor: pointer; }
+  .suggestions button:hover { background: #dbeafe; }
+  /* Table résultats */
+  .results table { width: 100%; border-collapse: collapse; font-size: 0.85rem; }
+  .results th { background: #1a56db; color: white; padding: 0.5rem; text-align: left; }
+  .results td { padding: 0.5rem; border-bottom: 1px solid #e2e8f0; }
+  .results tr:hover td { background: #f0f4f8; }
+  h2 { font-size: 1rem; color: #374151; margin-bottom: 0.8rem; }
+  .badge { display: inline-block; padding: 2px 8px; border-radius: 10px; font-size: 0.75rem; font-weight: 600; }
+  .badge-green { background: #dcfce7; color: #166534; }
+  .badge-orange { background: #fff7ed; color: #9a3412; }
+  .badge-red { background: #fee2e2; color: #991b1b; }
 </style>
 </head>
-
 <body>
+<header>
+  <span>🚌</span>
+  <div>
+    <h1>TranspoBot</h1>
+    <small>Assistant IA — Gestion de Transport</small>
+  </div>
+</header>
 
-<<!DOCTYPE html> <html lang="fr"> <head> <meta charset="UTF-8"> <meta name="viewport" content="width=device-width, initial-scale=1.0"> <title>TranspoBot — Assistant IA Transport</title> <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.min.js"></script> <style> * { box-sizing: border-box; margin: 0; padding: 0; } body { font-family: 'Segoe UI', sans-serif; background: #f1f5f9; color: #1e293b; } /* ── HEADER ── */ header { background: #1a56db; color: white; padding: 1rem 2rem; display: flex; align-items: center; gap: 1rem; box-shadow: 0 2px 16px rgba(26,86,219,0.28); } .hdr-icon { width: 46px; height: 46px; background: rgba(255,255,255,0.18); border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 22px; flex-shrink: 0; } header h1 { font-size: 1.3rem; font-weight: 700; letter-spacing: -0.3px; } header small { font-size: 0.75rem; opacity: 0.72; } .hdr-badge { margin-left: auto; background: rgba(255,255,255,0.15); border: 1px solid rgba(255,255,255,0.22); border-radius: 20px; padding: 5px 14px; font-size: 0.75rem; display: flex; align-items: center; gap: 7px; } .live-dot { width: 7px; height: 7px; background: #4ade80; border-radius: 50%; } /* ── TABS ── */ .tabs { background: white; border-bottom: 1px solid #e2e8f0; padding: 0 1.5rem; display: flex; overflow-x: auto; gap: 0; } .tab-btn { padding: 0.85rem 1.3rem; border: none; background: none; cursor: pointer; font-size: 0.875rem; font-weight: 500; color: #64748b; border-bottom: 3px solid transparent; margin-bottom: -1px; white-space: nowrap; transition: color 0.18s, background 0.18s; } .tab-btn:hover { color: #1a56db; background: #f5f8ff; } .tab-btn.active { color: #1a56db; border-bottom-color: #1a56db; font-weight: 600; } .tab-content { display: none; } .tab-content.active { display: block; } /* ── LAYOUT ── */ .container { display: grid; grid-template-columns: minmax(0,1fr) minmax(0,2fr); gap: 1.2rem; padding: 1.2rem; max-width: 1400px; margin: 0 auto; } .container-full { padding: 1.2rem; max-width: 1400px; margin: 0 auto; } /* ── CARDS ── */ .card { background: white; border-radius: 14px; padding: 1.2rem 1.3rem; border: 0.5px solid #e2e8f0; box-shadow: 0 1px 6px rgba(0,0,0,0.05); } .card:hover { transform: translateY(-3px); box-shadow: 0 12px 40px rgba(26,86,219,0.15); } h2 { font-size: 0.78rem; font-weight: 600; color: #64748b; text-transform: uppercase; letter-spacing: 0.07em; margin-bottom: 0.9rem; } /* ── STATS ── */ .stats-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 0.7rem; margin-bottom: 1rem; } .stat { background: #eff6ff; border-radius: 10px; padding: 0.85rem; text-align: center; border: 1px solid #dbeafe; } .stat .val { font-size: 1.75rem; font-weight: 700; color: #1a56db; line-height: 1.1; } .stat .lbl { font-size: 0.7rem; color: #64748b; margin-top: 4px; font-weight: 500; } /* ── BADGES ── */ .badge { display: inline-block; padding: 2px 9px; border-radius: 20px; font-size: 0.7rem; font-weight: 600; } .badge-green { background: #dcfce7; color: #15803d; } .badge-orange { background: #fff7ed; color: #c2410c; } .badge-red { background: #fee2e2; color: #b91c1c; } .badge-blue { background: #dbeafe; color: #1d4ed8; } /* ── TABLES ── */ .results table { width: 100%; border-collapse: collapse; font-size: 0.83rem; } .results th { background: #1a56db; color: white; padding: 0.5rem 0.7rem; text-align: left; font-weight: 500; font-size: 0.75rem; } .results th:first-child { border-radius: 8px 0 0 0; } .results th:last-child { border-radius: 0 8px 0 0; } .results td { padding: 0.5rem 0.7rem; border-bottom: 1px solid #f1f5f9; } .results tr:hover td { background: #f8fafc; } /* ── CHAT ── */ .chat-box { height: 400px; overflow-y: auto; border: 1px solid #e2e8f0; border-radius: 12px; padding: 1rem; margin-bottom: 1rem; background: #f8fafc; display: flex; flex-direction: column; gap: 0.55rem; } .msg { } .msg.user { text-align: right; } .msg.bot { text-align: left; } .msg.user .bubble { background: #1a56db; color: white; border-radius: 16px 16px 4px 16px; margin-left: auto; } .msg.bot .bubble { background: white; border: 1px solid #e2e8f0; color: #1e293b; border-radius: 16px 16px 16px 4px; } .bubble { display: inline-block; padding: 0.6rem 1rem; max-width: 85%; font-size: 0.875rem; line-height: 1.55; } .sql-preview { background: #1e293b; color: #94a3b8; font-family: monospace; font-size: 0.72rem; padding: 0.55rem 0.75rem; border-radius: 6px; margin-top: 6px; white-space: pre-wrap; text-align: left; } /* ── SUGGESTIONS ── */ .suggestions { display: flex; flex-wrap: wrap; gap: 0.35rem; margin-bottom: 0.9rem; } .suggestions button { background: #eff6ff; color: #1d4ed8; border: 1px solid #bfdbfe; border-radius: 20px; padding: 0.3rem 0.85rem; font-size: 0.75rem; cursor: pointer; transition: background 0.15s; } .suggestions button:hover { background: #dbeafe; } /* ── CHAT INPUT ── */ .chat-input { display: flex; gap: 0.5rem; } .chat-input input { flex: 1; border: 1px solid #cbd5e1; border-radius: 10px; padding: 0.65rem 1rem; font-size: 0.9rem; outline: none; transition: border-color 0.15s, box-shadow 0.15s; } .chat-input input:focus { border-color: #1a56db; box-shadow: 0 0 0 3px rgba(26,86,219,0.1); } .chat-input button { background: #1a56db; color: white; border: none; border-radius: 10px; padding: 0.65rem 1.2rem; cursor: pointer; font-size: 0.9rem; font-weight: 500; transition: background 0.15s; } .chat-input button:hover { background: #1e40af; } /* ── FILTER PILLS ── */ .filter-row { display: flex; gap: 0.4rem; margin-bottom: 1rem; flex-wrap: wrap; } .fpill { border-radius: 20px; padding: 0.3rem 0.9rem; font-size: 0.78rem; font-weight: 500; cursor: pointer; transition: opacity 0.15s; border: none; } .fpill:hover { opacity: 0.82; } .fp-blue { background: #1a56db; color: white; } .fp-green { background: #dcfce7; color: #15803d; border: 1px solid #bbf7d0; } .fp-orange { background: #fff7ed; color: #c2410c; border: 1px solid #fed7aa; } .fp-red { background: #fee2e2; color: #b91c1c; border: 1px solid #fecaca; } /* ── VEHICLES ── */ .vehicles-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(220px, 1fr)); gap: 1rem; margin-top: 0.5rem; } .vehicle-card { background: #f8fafc; border: 1px solid #e2e8f0; border-radius: 12px; padding: 1rem; transition: box-shadow 0.18s, transform 0.18s; } .vehicle-card:hover { box-shadow: 0 6px 18px rgba(26,86,219,0.1); transform: translateY(-2px); } .vehicle-card .immat { font-weight: 700; font-size: 0.95rem; color: #1a56db; margin-bottom: 0.5rem; } .vehicle-card .info { font-size: 0.78rem; color: #64748b; margin-top: 0.3rem; } .vehicle-card .info strong { color: #1e293b; } /* ── DRIVERS ── */ .drivers-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(240px, 1fr)); gap: 1rem; margin-top: 0.5rem; } .driver-card { background: #f8fafc; border: 1px solid #e2e8f0; border-radius: 12px; padding: 1rem; display: flex; align-items: center; gap: 0.9rem; transition: box-shadow 0.18s, transform 0.18s; } .driver-card:hover { box-shadow: 0 6px 18px rgba(26,86,219,0.1); transform: translateY(-2px); } .driver-avatar { width: 44px; height: 44px; border-radius: 50%; background: #1a56db; color: white; display: flex; align-items: center; justify-content: center; font-weight: 700; font-size: 0.95rem; flex-shrink: 0; } .driver-info .name { font-weight: 600; font-size: 0.875rem; color: #1e293b; } .driver-info .detail { font-size: 0.75rem; color: #64748b; margin-top: 2px; } /* ── CHARTS ── */ .chart-wrapper { position: relative; height: 280px; margin-top: 0.5rem; } .grid-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 1.2rem; margin-top: 1.2rem; } /* ── RECETTES STATS ── */ .recettes-stats { display: grid; grid-template-columns: repeat(3, 1fr); gap: 0.8rem; margin-bottom: 1.2rem; } @media (max-width: 900px) { .container { grid-template-columns: 1fr; } .grid-2 { grid-template-columns: 1fr; } .recettes-stats { grid-template-columns: 1fr 1fr; } } </style> </head> <body> <header> <div class="hdr-icon">🚌</div> <div> <h1>TranspoBot</h1> <small>Assistant IA — Gestion de Transport</small> </div> <div class="hdr-badge"> <span class="live-dot"></span> En ligne </div> </header> <div class="tabs"> <button class="tab-btn active" onclick="showTab('dashboard', this)">📊 Tableau de bord</button> <button class="tab-btn" onclick="showTab('vehicules', this)">🚌 Véhicules</button> <button class="tab-btn" onclick="showTab('chauffeurs', this)">👤 Chauffeurs</button> <button class="tab-btn" onclick="showTab('recettes', this)">💰 Recettes</button> <button class="tab-btn" onclick="showTab('chat', this)">💬 Assistant IA</button> </div> <!-- ONGLET 1 : Dashboard --> <div id="tab-dashboard" class="tab-content active"> <div class="container"> <div style="display:flex;flex-direction:column;gap:1rem;"> <div class="card"> <h2>📊 Tableau de bord</h2> <div class="stats-grid" id="stats"> <div class="stat"><div class="val">—</div><div class="lbl">Trajets terminés</div></div> <div class="stat"><div class="val">—</div><div class="lbl">En cours</div></div> <div class="stat"><div class="val">—</div><div class="lbl">Véhicules actifs</div></div> <div class="stat"><div class="val">—</div><div class="lbl">Incidents ouverts</div></div> </div> </div> <div class="card"> <h2>🕒 Trajets récents</h2> <div class="results" id="trajets-table"><p style="color:#94a3b8;font-size:0.83rem">Chargement...</p></div> </div> </div> <div class="card" style="display:flex;flex-direction:column;"> <h2>💬 Assistant TranspoBot</h2> <div class="suggestions"> <button onclick="ask('Combien de trajets ont été effectués cette semaine ?')">Trajets cette semaine</button> <button onclick="ask('Quel chauffeur a le plus de trajets ?')">Meilleur chauffeur</button> <button onclick="ask('Quels véhicules sont en maintenance ?')">Véhicules en maintenance</button> <button onclick="ask('Liste les incidents graves non résolus')">Incidents graves</button> <button onclick="ask('Quelle est la recette totale du mois de mars 2026 ?')">Recette mars 2026</button> </div> <div class="chat-box" id="chat-box"> <div class="msg bot"><div class="bubble">👋 Bonjour ! Je suis TranspoBot, votre assistant intelligent.<br>Posez-moi n'importe quelle question sur votre flotte, vos trajets ou vos chauffeurs !</div></div> </div> <div class="chat-input"> <input type="text" id="user-input" placeholder="Ex: Combien de trajets ce mois-ci ?" onkeypress="if(event.key==='Enter') sendMessage()"> <button onclick="sendMessage()">Envoyer ➤</button> </div> <div id="results-section" style="margin-top:1rem; display:none"> <h2>📋 Résultats</h2> <div class="results" id="results-table"></div> </div> </div> </div> </div> <!-- ONGLET 2 : Véhicules --> <div id="tab-vehicules" class="tab-content"> <div class="container-full"> <div class="card"> <h2>🚌 Flotte de véhicules</h2> <div class="filter-row"> <button class="fpill fp-blue" onclick="filtrerVehicules('tous')">Tous</button> <button class="fpill fp-green" onclick="filtrerVehicules('actif')">Actifs</button> <button class="fpill fp-orange" onclick="filtrerVehicules('maintenance')">En maintenance</button> <button class="fpill fp-red" onclick="filtrerVehicules('hors_service')">Hors service</button> </div> <div class="vehicles-grid" id="vehicles-grid"><p style="color:#94a3b8;font-size:0.83rem">Chargement...</p></div> </div> </div> </div> <!-- ONGLET 3 : Chauffeurs --> <div id="tab-chauffeurs" class="tab-content"> <div class="container-full"> <div class="card"> <h2>👤 Liste des chauffeurs</h2> <div class="filter-row"> <button class="fpill fp-blue" onclick="filtrerChauffeurs('tous')">Tous</button> <button class="fpill fp-green" onclick="filtrerChauffeurs('disponible')">Disponibles</button> <button class="fpill fp-red" onclick="filtrerChauffeurs('indisponible')">Indisponibles</button> </div> <div class="drivers-grid" id="drivers-grid"><p style="color:#94a3b8;font-size:0.83rem">Chargement...</p></div> </div> </div> </div> <!-- ONGLET 4 : Recettes --> <div id="tab-recettes" class="tab-content"> <div class="container-full"> <div class="recettes-stats"> <div class="stat"><div class="val" id="recette-totale">—</div><div class="lbl">Recette totale (FCFA)</div></div> <div class="stat"><div class="val" id="recette-mois">—</div><div class="lbl">Ce mois-ci (FCFA)</div></div> <div class="stat"><div class="val" id="nb-passagers">—</div><div class="lbl">Total passagers</div></div> </div> <div class="grid-2"> <div class="card"> <h2>📈 Recettes par mois</h2> <div class="chart-wrapper"><canvas id="chart-recettes"></canvas></div> </div> <div class="card"> <h2>🗺️ Trajets par ligne</h2> <div class="chart-wrapper"><canvas id="chart-lignes"></canvas></div> </div> </div> </div> </div> <!-- ONGLET 5 : Chat plein écran --> <div id="tab-chat" class="tab-content"> <div class="container-full"> <div class="card"> <h2>💬 Assistant TranspoBot — Mode plein écran</h2> <div class="suggestions"> <button onclick="ask2('Combien de trajets ont été effectués cette semaine ?')">Trajets cette semaine</button> <button onclick="ask2('Quel chauffeur a le plus de trajets ?')">Meilleur chauffeur</button> <button onclick="ask2('Quels véhicules sont en maintenance ?')">Véhicules en maintenance</button> <button onclick="ask2('Liste les incidents graves non résolus')">Incidents graves</button> <button onclick="ask2('Quelle est la recette totale du mois de mars 2026 ?')">Recette mars 2026</button> <button onclick="ask2('Combien de chauffeurs sont disponibles ?')">Chauffeurs disponibles</button> <button onclick="ask2('Quel véhicule a le plus de kilométrage ?')">Kilométrage max</button> </div> <div class="chat-box" id="chat-box-2" style="height:500px"> <div class="msg bot"><div class="bubble">👋 Bonjour ! Je suis TranspoBot.<br>Posez-moi n'importe quelle question en français ou en anglais !</div></div> </div> <div class="chat-input"> <input type="text" id="user-input-2" placeholder="Ex: Quel chauffeur a le plus d'incidents ce mois-ci ?" onkeypress="if(event.key==='Enter') sendMessage2()"> <button onclick="sendMessage2()">Envoyer ➤</button> </div> <div id="results-section-2" style="margin-top:1rem; display:none"> <h2>📋 Résultats</h2> <div class="results" id="results-table-2"></div> </div> </div> </div> </div> <script> const API = 'https://transpobot-production-4fb7.up.railway.app'; let allVehicules = []; let allChauffeurs = []; function showTab(name, el) { document.querySelectorAll('.tab-content').forEach(t => t.classList.remove('active')); document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active')); document.getElementById('tab-' + name).classList.add('active'); el.classList.add('active'); if (name === 'vehicules' && allVehicules.length === 0) loadVehicules(); if (name === 'chauffeurs' && allChauffeurs.length === 0) loadChauffeurs(); if (name === 'recettes') loadRecettes(); } async function loadStats() { try { const r = await fetch(${API}/api/stats); const d = await r.json(); const grid = document.getElementById('stats'); const vals = [d.total_trajets, d.trajets_en_cours, d.vehicules_actifs, d.incidents_ouverts]; grid.querySelectorAll('.val').forEach((el, i) => el.textContent = vals[i] ?? '—'); } catch(e) { console.warn('Stats non disponibles', e); } } async function loadTrajets() { try { const r = await fetch(${API}/api/trajets/recent); const data = await r.json(); const container = document.getElementById('trajets-table'); if (!data.length) { container.innerHTML = '<p style="color:#94a3b8">Aucun trajet</p>'; return; } const rows = data.slice(0, 8).map(t => <tr> <td>${t.ligne}</td><td>${t.chauffeur_nom}</td> <td>${new Date(t.date_heure_depart).toLocaleDateString('fr')}</td> <td><span class="badge ${t.statut==='termine'?'badge-green':t.statut==='en_cours'?'badge-orange':'badge-red'}">${t.statut}</span></td> </tr>).join(''); container.innerHTML = <table><thead><tr><th>Ligne</th><th>Chauffeur</th><th>Date</th><th>Statut</th></tr></thead><tbody>${rows}</tbody></table>; } catch(e) { console.warn('Trajets non disponibles', e); } } function ask(q) { document.getElementById('user-input').value = q; sendMessage(); } function addMessage(role, text, sql = null) { const box = document.getElementById('chat-box'); const div = document.createElement('div'); div.className = msg ${role}; div.innerHTML = <div class="bubble">${text}${sql ? <div class="sql-preview">${sql}</div> : ''}</div>; box.appendChild(div); box.scrollTop = box.scrollHeight; } async function sendMessage() { const input = document.getElementById('user-input'); const question = input.value.trim(); if (!question) return; input.value = ''; addMessage('user', question); addMessage('bot', '⏳ Analyse en cours...'); try { const r = await fetch(${API}/api/chat, { method: 'POST', headers: {'Content-Type': 'application/json'}, body: JSON.stringify({ question }) }); const data = await r.json(); document.querySelector('#chat-box .msg.bot:last-child').remove(); const answer = data.answer || data.detail || 'Réponse reçue'; const count = data.count !== undefined ? (${data.count} résultat${data.count > 1 ? 's' : ''}) : ''; addMessage('bot', answer + count, data.sql); if (data.data && data.data.length > 0) { document.getElementById('results-section').style.display = 'block'; const keys = Object.keys(data.data[0]); const rows = data.data.map(row => <tr>${keys.map(k => <td>${row[k] ?? ''}</td>).join('')}</tr>).join(''); document.getElementById('results-table').innerHTML = <table><thead><tr>${keys.map(k=><th>${k}</th>).join('')}</tr></thead><tbody>${rows}</tbody><table>; } else { document.getElementById('results-section').style.display = 'none'; } } catch(e) { console.log('Erreur chat:', e); document.querySelector('#chat-box .msg.bot:last-child').remove(); addMessage('bot', '❌ Erreur de connexion au serveur.'); } } function ask2(q) { document.getElementById('user-input-2').value = q; sendMessage2(); } function addMessage2(role, text, sql = null) { const box = document.getElementById('chat-box-2'); const div = document.createElement('div'); div.className = msg ${role}; div.innerHTML = <div class="bubble">${text}${sql ? <div class="sql-preview">${sql}</div> : ''}</div>; box.appendChild(div); box.scrollTop = box.scrollHeight; } async function sendMessage2() { const input = document.getElementById('user-input-2'); const question = input.value.trim(); if (!question) return; input.value = ''; addMessage2('user', question); addMessage2('bot', '⏳ Analyse en cours...'); try { const r = await fetch(${API}/api/chat, { method: 'POST', headers: {'Content-Type': 'application/json'}, body: JSON.stringify({ question }) }); const data = await r.json(); document.querySelector('#chat-box-2 .msg.bot:last-child').remove(); const answer = data.answer || data.detail || '❌ Réponse invalide'; const count = data.count !== undefined ? (${data.count} résultat${data.count > 1 ? 's' : ''}) : ''; addMessage2('bot', answer + count, data.sql); if (data.data && data.data.length > 0) { document.getElementById('results-section-2').style.display = 'block'; const keys = Object.keys(data.data[0]); const rows = data.data.map(row => <tr>${keys.map(k => <td>${row[k] ?? ''}</td>).join('')}</tr>).join(''); document.getElementById('results-table-2').innerHTML = <table><thead><tr>${keys.map(k=><th>${k}</th>).join('')}</tr></thead><tbody>${rows}</tbody></table>; } else { document.getElementById('results-section-2').style.display = 'none'; } } catch(e) { console.log('Erreur chat:', e); document.querySelector('#chat-box-2 .msg.bot:last-child').remove(); addMessage2('bot', '❌ Erreur de connexion au serveur.'); } } async function loadVehicules() { try { const r = await fetch(${API}/api/vehicules); allVehicules = await r.json(); renderVehicules(allVehicules); } catch(e) { document.getElementById('vehicles-grid').innerHTML = '<p style="color:#ef4444">Impossible de charger les véhicules.</p>'; } } function renderVehicules(data) { const grid = document.getElementById('vehicles-grid'); if (!data.length) { grid.innerHTML = '<p style="color:#94a3b8">Aucun véhicule.</p>'; return; } grid.innerHTML = data.map(v => <div class="vehicle-card"> <div class="immat">🚌 ${v.immatriculation}</div> <div style="margin:0.3rem 0;"> <span class="badge ${v.statut==='actif'?'badge-green':v.statut==='maintenance'?'badge-orange':'badge-red'}">${v.statut}</span> <span class="badge badge-blue" style="margin-left:4px">${v.type}</span> </div> <div class="info">👥 Capacité : <strong>${v.capacite}</strong> places</div> <div class="info">🛣️ Kilométrage : <strong>${Number(v.kilometrage).toLocaleString('fr')} km</strong></div> <div class="info">📅 Acquis le : ${v.date_acquisition ? new Date(v.date_acquisition).toLocaleDateString('fr') : '—'}</div> </div>).join(''); } function filtrerVehicules(statut) { renderVehicules(statut === 'tous' ? allVehicules : allVehicules.filter(v => v.statut === statut)); } async function loadChauffeurs() { try { const r = await fetch(${API}/api/chauffeurs); allChauffeurs = await r.json(); renderChauffeurs(allChauffeurs); } catch(e) { document.getElementById('drivers-grid').innerHTML = '<p style="color:#ef4444">Impossible de charger les chauffeurs.</p>'; } } function renderChauffeurs(data) { const grid = document.getElementById('drivers-grid'); if (!data.length) { grid.innerHTML = '<p style="color:#94a3b8">Aucun chauffeur.</p>'; return; } grid.innerHTML = data.map(c => { const initiales = (c.prenom[0] + c.nom[0]).toUpperCase(); return <div class="driver-card"> <div class="driver-avatar">${initiales}</div> <div class="driver-info"> <div class="name">${c.prenom} ${c.nom}</div> <div class="detail">📋 Permis ${c.categorie_permis} — ${c.numero_permis}</div> <div class="detail">📞 ${c.telephone || '—'}</div> <div class="detail" style="margin-top:4px"> <span class="badge ${c.disponibilite ? 'badge-green' : 'badge-red'}">${c.disponibilite ? 'Disponible' : 'Indisponible'}</span> ${c.immatriculation ? <span class="badge badge-blue" style="margin-left:4px">${c.immatriculation}</span> : ''} </div> </div> </div>; }).join(''); } function filtrerChauffeurs(filtre) { let filtered = filtre === 'tous' ? allChauffeurs : filtre === 'disponible' ? allChauffeurs.filter(c => c.disponibilite) : allChauffeurs.filter(c => !c.disponibilite); renderChauffeurs(filtered); } let chartRecettes = null, chartLignes = null; async function loadRecettes() { try { // 🔹 Stats (haut) const r = await fetch(${API}/api/stats); const d = await r.json(); document.getElementById('recette-totale').textContent = d.recette_totale ? Number(d.recette_totale).toLocaleString('fr') : '—'; document.getElementById('recette-mois').textContent = d.recette_mois ? Number(d.recette_mois).toLocaleString('fr') : '—'; document.getElementById('nb-passagers').textContent = d.total_passagers ?? '—'; } catch (e) { console.warn("Erreur stats:", e); } try { // 🔹 📊 DONNÉES RÉELLES POUR LE GRAPHIQUE const r2 = await fetch(${API}/api/recettes/mois); const data = await r2.json(); // transformer les données const labels = data.map(d => { const mois = ["Janv","Févr","Mars","Avr","Mai","Juin","Juil","Août","Sept","Oct","Nov","Déc"]; return mois[d.mois - 1]; }); const values = data.map(d => d.total); const ctx1 = document.getElementById('chart-recettes').getContext('2d'); if (chartRecettes) chartRecettes.destroy(); chartRecettes = new Chart(ctx1, { type: 'bar', data: { labels: labels, datasets: [{ label: 'Recettes (FCFA)', data: values, backgroundColor: '#1a56db', borderRadius: 6 }] }, options: { responsive: true, maintainAspectRatio: false, plugins: { legend: { display: false } }, scales: { y: { beginAtZero: true, ticks: { callback: v => v.toLocaleString('fr') } } } } }); } catch (e) { console.warn("Erreur graphique:", e); } // 🔹 graphique lignes (inchangé) const ctx2 = document.getElementById('chart-lignes').getContext('2d'); if (chartLignes) chartLignes.destroy(); chartLignes = new Chart(ctx2, { type: 'doughnut', data: { labels: ['L1 Dakar-Thiès','L2 Dakar-Mbour','L3 Centre-Banlieue','L4 Aéroport'], datasets: [{ data: [14,8,10,7], backgroundColor: ['#1a56db','#0ea5e9','#6366f1','#8b5cf6'], borderWidth: 2 }] }, options: { responsive: true, maintainAspectRatio: false, plugins: { legend: { position: 'bottom', labels: { font: { size: 11 } } } } } }); } loadStats(); loadTrajets(); </script> </body> </html>>
+<div class="container">
+  <!-- Colonne gauche -->
+  <div>
+    <div class="card" style="margin-bottom:1rem">
+      <h2>📊 Tableau de bord</h2>
+      <div class="stats-grid" id="stats">
+        <div class="stat"><div class="val">—</div><div class="lbl">Trajets terminés</div></div>
+        <div class="stat"><div class="val">—</div><div class="lbl">En cours</div></div>
+        <div class="stat"><div class="val">—</div><div class="lbl">Véhicules actifs</div></div>
+        <div class="stat"><div class="val">—</div><div class="lbl">Incidents ouverts</div></div>
+      </div>
+    </div>
 
+    <div class="card">
+      <h2>🕒 Trajets récents</h2>
+      <div class="results" id="trajets-table"><p style="color:#94a3b8;font-size:0.85rem">Chargement...</p></div>
+    </div>
+  </div>
+
+  <!-- Colonne droite : Chat -->
+  <div class="card">
+    <h2>💬 Assistant TranspoBot</h2>
+    <div class="suggestions">
+      <button onclick="ask('Combien de trajets ont été effectués cette semaine ?')">Trajets cette semaine</button>
+      <button onclick="ask('Quel chauffeur a le plus de trajets ?')">Meilleur chauffeur</button>
+      <button onclick="ask('Quels véhicules sont en maintenance ?')">Véhicules en maintenance</button>
+      <button onclick="ask('Liste les incidents graves non résolus')">Incidents graves</button>
+      <button onclick="ask('Quelle est la recette totale du mois de mars 2026 ?')">Recette mars 2026</button>
+    </div>
+
+    <div class="chat-box" id="chat-box">
+      <div class="msg bot">
+        <div class="bubble">👋 Bonjour ! Je suis TranspoBot, votre assistant intelligent.<br>Posez-moi n'importe quelle question sur votre flotte, vos trajets ou vos chauffeurs !</div>
+      </div>
+    </div>
+
+    <div class="chat-input">
+      <input type="text" id="user-input" placeholder="Ex: Combien de trajets ce mois-ci ?" onkeypress="if(event.key==='Enter') sendMessage()">
+      <button onclick="sendMessage()">Envoyer ➤</button>
+    </div>
+
+    <div id="results-section" style="margin-top:1rem; display:none">
+      <h2>📋 Résultats</h2>
+      <div class="results" id="results-table"></div>
+    </div>
+  </div>
+</div>
+
+<script>
+const API = '';  // Remplacer par l'URL de votre backend
+
+async function loadStats() {
+  try {
+    const r = await fetch(`${API}/api/stats`);
+    const d = await r.json();
+    const grid = document.getElementById('stats');
+    const vals = [d.total_trajets, d.trajets_en_cours, d.vehicules_actifs, d.incidents_ouverts];
+    grid.querySelectorAll('.val').forEach((el, i) => el.textContent = vals[i] ?? '—');
+  } catch(e) { console.warn('Stats non disponibles'); }
+}
+
+async function loadTrajets() {
+  try {
+    const r = await fetch(`${API}/api/trajets/recent`);
+    const data = await r.json();
+    const container = document.getElementById('trajets-table');
+    if (!data.length) { container.innerHTML = '<p style="color:#94a3b8">Aucun trajet</p>'; return; }
+    const rows = data.slice(0, 8).map(t => `
+      <tr>
+        <td>${t.ligne}</td>
+        <td>${t.chauffeur_nom}</td>
+        <td>${new Date(t.date_heure_depart).toLocaleDateString('fr')}</td>
+        <td><span class="badge ${t.statut==='termine'?'badge-green':t.statut==='en_cours'?'badge-orange':'badge-red'}">${t.statut}</span></td>
+      </tr>`).join('');
+    container.innerHTML = `<table><thead><tr><th>Ligne</th><th>Chauffeur</th><th>Date</th><th>Statut</th></tr></thead><tbody>${rows}</tbody></table>`;
+  } catch(e) { console.warn('Trajets non disponibles'); }
+}
+
+function ask(q) {
+  document.getElementById('user-input').value = q;
+  sendMessage();
+}
+
+function addMessage(role, text, sql = null) {
+  const box = document.getElementById('chat-box');
+  const div = document.createElement('div');
+  div.className = `msg ${role}`;
+  div.innerHTML = `<div class="bubble">${text}${sql ? `<div class="sql-preview">${sql}</div>` : ''}</div>`;
+  box.appendChild(div);
+  box.scrollTop = box.scrollHeight;
+}
+
+async function sendMessage() {
+  const input = document.getElementById('user-input');
+  const question = input.value.trim();
+  if (!question) return;
+  input.value = '';
+  addMessage('user', question);
+  addMessage('bot', '⏳ Analyse en cours...');
+
+  try {
+    const r = await fetch(`${API}/api/chat`, {
+      method: 'POST',
+      headers: {'Content-Type': 'application/json'},
+      body: JSON.stringify({ question })
+    });
+    const data = await r.json();
+    document.querySelector('.msg.bot:last-child').remove();
+    addMessage('bot', data.answer + (data.count !== undefined ? ` (${data.count} résultat${data.count > 1 ? 's' : ''})` : ''), data.sql);
+
+    if (data.data && data.data.length > 0) {
+      const section = document.getElementById('results-section');
+      section.style.display = 'block';
+      const keys = Object.keys(data.data[0]);
+      const rows = data.data.map(row => `<tr>${keys.map(k => `<td>${row[k] ?? ''}</td>`).join('')}</tr>`).join('');
+      document.getElementById('results-table').innerHTML = `<table><thead><tr>${keys.map(k=>`<th>${k}</th>`).join('')}</tr></thead><tbody>${rows}</tbody></table>`;
+    }
+  } catch(e) {
+    document.querySelector('.msg.bot:last-child').remove();
+    addMessage('bot', '❌ Erreur de connexion au serveur.');
+  }
+}
+
+loadStats();
+loadTrajets();
+</script>
 </body>
 </html>
