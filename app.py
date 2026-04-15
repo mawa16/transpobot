@@ -183,6 +183,13 @@ def get_stats():
         "vehicules_actifs":  "SELECT COUNT(*) as n FROM vehicules WHERE statut='actif'",
         "incidents_ouverts": "SELECT COUNT(*) as n FROM incidents WHERE resolu=FALSE",
         "recette_totale":    "SELECT COALESCE(SUM(recette),0) as n FROM trajets WHERE statut='termine'",
+        "recette_mois": """
+SELECT COALESCE(SUM(recette),0) as n 
+FROM trajets 
+WHERE statut='termine' 
+AND MONTH(date_heure_depart) = MONTH(CURRENT_DATE()) 
+AND YEAR(date_heure_depart) = YEAR(CURRENT_DATE())
+"""
         "total_passagers":   "SELECT COALESCE(SUM(nb_passagers),0) as n FROM trajets WHERE statut='termine'",
     }
     for key, sql in queries.items():
