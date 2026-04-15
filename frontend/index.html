@@ -668,7 +668,8 @@ async function loadRecettes() {
     const r = await fetch(`${API}/api/stats`);
     const d = await r.json();
     document.getElementById('recette-totale').textContent = d.recette_totale ? Number(d.recette_totale).toLocaleString('fr') : '—';
-    document.getElementById('nb-passagers').textContent = d.total_passagers ?? '—';
+    document.getElementById('recette-mois').textContent = d.recette_mois ? Number(d.recette_mois).toLocaleString('fr') : '—';
+   document.getElementById('nb-passagers').textContent = d.total_passagers ?? '—';
   } catch(e) {}
 
   const ctx1 = document.getElementById('chart-recettes').getContext('2d');
