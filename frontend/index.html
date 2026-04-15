@@ -599,7 +599,13 @@ async function sendMessage2() {
     if (data.data && data.data.length > 0) {
       document.getElementById('results-section-2').style.display = 'block';
       const keys = Object.keys(data.data[0]);
-      const rows = data.data.map(row => `<tr>${keys.map(k => `<td>${row[k] ?? ''}</td>`).join('')}</tr>`).join('');
+      const rows = data.data.map(row => 
+  `<tr>${keys.map(k => 
+    `<td>${
+      k === 'resolu' ? (row[k] ? 'Oui' : 'Non') : row[k] ?? ''
+    }</td>`
+  ).join('')}</tr>`
+).join('');
       document.getElementById('results-table-2').innerHTML = `<table><thead><tr>${keys.map(k=>`<th>${k}</th>`).join('')}</tr></thead><tbody>${rows}</tbody></table>`;
     } else {
       document.getElementById('results-section-2').style.display = 'none';
