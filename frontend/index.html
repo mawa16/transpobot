@@ -482,6 +482,8 @@ function showTab(name, el) {
   document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
   document.getElementById('tab-' + name).classList.add('active');
   el.classList.add('active');
+  window.location.hash = name;
+ 
   if (name === 'vehicules' && allVehicules.length === 0) loadVehicules();
   if (name === 'chauffeurs' && allChauffeurs.length === 0) loadChauffeurs();
   if (name === 'recettes') loadRecettes();
@@ -774,6 +776,17 @@ async function loadRecettes() {
 }
 loadStats();
 loadTrajets();
+window.addEventListener("load", () => {
+  const hash = window.location.hash.replace('#', '');
+
+  if (hash) {
+    const tabBtn = document.querySelector(`.tab-btn[onclick*="${hash}"]`);
+    if (tabBtn) {
+      showTab(hash, tabBtn);
+    }
+  }
+});
+ 
 </script>
 </body>
 </html>
