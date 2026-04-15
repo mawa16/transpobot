@@ -3,7 +3,7 @@ TranspoBot — Backend FastAPI corrigé
 Projet GLSi L3 — ESP/UCAD
 """
 
-from fastapi import FastAPI, HTTPException
+from fastapi import FastAPI, HTTPException, Query
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.staticfiles import StaticFiles
 from pydantic import BaseModel
@@ -15,6 +15,7 @@ load_dotenv()
 import re
 import json
 import httpx
+from datetime import datetime
 
 app = FastAPI(title="TranspoBot API", version="1.0.0")
 
@@ -66,6 +67,7 @@ try:
 except Exception as e:
     print(f"❌ Erreur MySQL: {e}")
     print("⚠️ L'application continue mais sans BDD...")
+
 LLM_API_KEY  = os.getenv("OPENAI_API_KEY", "")
 LLM_MODEL    = os.getenv("LLM_MODEL", "gpt-4o-mini")
 LLM_BASE_URL = os.getenv("LLM_BASE_URL", "https://api.openai.com/v1")
@@ -177,27 +179,162 @@ async def chat(msg: ChatMessage):
         raise HTTPException(status_code=500, detail=str(e))
 
 @app.get("/api/stats")
-def get_stats():
+def get_stats(mois: int = None, annee: int = None):
+    """
+    Retourne les statistiques globales
+    Si mois et annee sont fournis, retourne aussi les stats du mois
+    """
     stats = {}
-    queries = {
+    
+    # Stats globales (indépendantes du mois)
+    queries_globales = {
         "total_trajets":     "SELECT COUNT(*) as n FROM trajets WHERE statut='termine'",
         "trajets_en_cours":  "SELECT COUNT(*) as n FROM trajets WHERE statut='en_cours'",
         "vehicules_actifs":  "SELECT COUNT(*) as n FROM vehicules WHERE statut='actif'",
         "incidents_ouverts": "SELECT COUNT(*) as n FROM incidents WHERE resolu=FALSE",
-        "recette_totale":    "SELECT COALESCE(SUM(recette),0) as n FROM trajets WHERE statut='termine'",
         "total_passagers":   "SELECT COALESCE(SUM(nb_passagers),0) as n FROM trajets WHERE statut='termine'",
-         "recette_mois": """
-            SELECT COALESCE(SUM(recette),0) as n
-            FROM trajets
-            WHERE MONTH(date_heure_depart) = 4
-            AND YEAR(date_heure_depart) = 2026
-            AND statut IN ('termine','en_cours')
-        """
+        "recette_totale":    "SELECT COALESCE(SUM(recette),0) as n FROM trajets WHERE statut='termine'",
     }
-    for key, sql in queries.items():
+    
+    for key, sql in queries_globales.items():
         result = execute_query(sql)
         stats[key] = result[0]["n"] if result else 0
+    
+    # Stats mensuelles (si mois et annee sont fournis)
+    if mois is not None and annee is not None:
+        queries_mensuelles = {
+            "recette_mois": f"""
+                SELECT COALESCE(SUM(recette),0) as n
+                FROM trajets
+                WHERE MONTH(date_heure_depart) = {mois}
+                AND YEAR(date_heure_depart) = {annee}
+                AND statut = 'termine'
+            """,
+            "trajets_mois": f"""
+                SELECT COUNT(*) as n
+                FROM trajets
+                WHERE MONTH(date_heure_depart) = {mois}
+                AND YEAR(date_heure_depart) = {annee}
+                AND statut = 'termine'
+            """,
+            "passagers_mois": f"""
+                SELECT COALESCE(SUM(nb_passagers),0) as n
+                FROM trajets
+                WHERE MONTH(date_heure_depart) = {mois}
+                AND YEAR(date_heure_depart) = {annee}
+                AND statut = 'termine'
+            """
+        }
+        
+        for key, sql in queries_mensuelles.items():
+            result = execute_query(sql)
+            stats[key] = result[0]["n"] if result else 0
+    else:
+        # Si pas de mois spécifié, on prend le mois courant
+        current_month = datetime.now().month
+        current_year = datetime.now().year
+        result = execute_query(f"""
+            SELECT COALESCE(SUM(recette),0) as n
+            FROM trajets
+            WHERE MONTH(date_heure_depart) = {current_month}
+            AND YEAR(date_heure_depart) = {current_year}
+            AND statut = 'termine'
+        """)
+        stats["recette_mois"] = result[0]["n"] if result else 0
+        stats["trajets_mois"] = stats["total_trajets"]
+        stats["passagers_mois"] = stats["total_passagers"]
+    
     return stats
+
+@app.get("/api/stats/mois/{mois}")
+def get_stats_mois(mois: int, annee: int = Query(default=datetime.now().year)):
+    """Retourne les stats pour un mois spécifique"""
+    sql_recette = f"""
+        SELECT COALESCE(SUM(recette), 0) as recette
+        FROM trajets
+        WHERE MONTH(date_heure_depart) = {mois}
+        AND YEAR(date_heure_depart) = {annee}
+        AND statut = 'termine'
+    """
+    sql_trajets = f"""
+        SELECT COUNT(*) as nb_trajets
+        FROM trajets
+        WHERE MONTH(date_heure_depart) = {mois}
+        AND YEAR(date_heure_depart) = {annee}
+        AND statut = 'termine'
+    """
+    sql_passagers = f"""
+        SELECT COALESCE(SUM(nb_passagers), 0) as passagers
+        FROM trajets
+        WHERE MONTH(date_heure_depart) = {mois}
+        AND YEAR(date_heure_depart) = {annee}
+        AND statut = 'termine'
+    """
+    
+    recette = execute_query(sql_recette)
+    trajets = execute_query(sql_trajets)
+    passagers = execute_query(sql_passagers)
+    
+    return {
+        "recette": recette[0]["recette"] if recette else 0,
+        "nb_trajets": trajets[0]["nb_trajets"] if trajets else 0,
+        "passagers": passagers[0]["passagers"] if passagers else 0,
+        "mois": mois,
+        "annee": annee
+    }
+
+@app.get("/api/stats/recettes-par-mois")
+def get_recettes_par_mois(annee: int = Query(default=datetime.now().year)):
+    """Retourne les recettes pour chaque mois d'une année"""
+    recettes = []
+    for mois in range(1, 13):
+        result = execute_query(f"""
+            SELECT COALESCE(SUM(recette), 0) as recette
+            FROM trajets
+            WHERE MONTH(date_heure_depart) = {mois}
+            AND YEAR(date_heure_depart) = {annee}
+            AND statut = 'termine'
+        """)
+        recettes.append(result[0]["recette"] if result else 0)
+    
+    return {
+        "annee": annee,
+        "recettes": recettes,
+        "mois_labels": ["Janv", "Févr", "Mars", "Avr", "Mai", "Juin", "Juil", "Août", "Sep", "Oct", "Nov", "Déc"]
+    }
+
+@app.get("/api/stats/recettes-par-ligne")
+def get_recettes_par_ligne(annee: int = Query(default=datetime.now().year), mois: int = None):
+    """Retourne les recettes par ligne pour une année ou un mois spécifique"""
+    where_clause = f"YEAR(t.date_heure_depart) = {annee}"
+    if mois:
+        where_clause += f" AND MONTH(t.date_heure_depart) = {mois}"
+    
+    sql = f"""
+        SELECT 
+            l.nom as ligne,
+            l.code,
+            COALESCE(SUM(t.recette), 0) as recette,
+            COUNT(t.id) as nb_trajets
+        FROM trajets t
+        JOIN lignes l ON t.ligne_id = l.id
+        WHERE {where_clause}
+        AND t.statut = 'termine'
+        GROUP BY l.id, l.nom, l.code
+        ORDER BY recette DESC
+    """
+    return execute_query(sql)
+
+@app.get("/api/annees-disponibles")
+def get_annees_disponibles():
+    """Retourne les années pour lesquelles il y a des données"""
+    result = execute_query("""
+        SELECT DISTINCT YEAR(date_heure_depart) as annee
+        FROM trajets
+        WHERE statut = 'termine'
+        ORDER BY annee DESC
+    """)
+    return [r["annee"] for r in result]
 
 @app.get("/api/vehicules")
 def get_vehicules():
@@ -213,8 +350,8 @@ def get_chauffeurs():
     """)
 
 @app.get("/api/trajets/recent")
-def get_trajets_recent():
-    return execute_query("""
+def get_trajets_recent(limit: int = 20):
+    return execute_query(f"""
         SELECT t.*, l.nom as ligne, ch.nom as chauffeur_nom,
                v.immatriculation
         FROM trajets t
@@ -222,7 +359,7 @@ def get_trajets_recent():
         JOIN chauffeurs ch ON t.chauffeur_id = ch.id
         JOIN vehicules v ON t.vehicule_id = v.id
         ORDER BY t.date_heure_depart DESC
-        LIMIT 20
+        LIMIT {limit}
     """)
 
 @app.get("/api/incidents")
