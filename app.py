@@ -184,6 +184,13 @@ def get_stats():
         "incidents_ouverts": "SELECT COUNT(*) as n FROM incidents WHERE resolu=FALSE",
         "recette_totale":    "SELECT COALESCE(SUM(recette),0) as n FROM trajets WHERE statut='termine'",
         "total_passagers":   "SELECT COALESCE(SUM(nb_passagers),0) as n FROM trajets WHERE statut='termine'",
+         "recette_mois": """
+            SELECT COALESCE(SUM(recette),0) as n
+            FROM trajets
+            WHERE MONTH(date_heure_depart) = 4
+            AND YEAR(date_heure_depart) = 2026
+            AND statut IN ('termine','en_cours')
+        """
     }
     for key, sql in queries.items():
         result = execute_query(sql)
