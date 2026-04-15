@@ -38,16 +38,28 @@ app.add_middleware(
 
 # ── Configuration ──────────────────────────────────────────────
 DB_CONFIG = {
-    "host": os.getenv("MYSQLHOST"),
-    "user": os.getenv("MYSQLUSER"),
-    "password": os.getenv("MYSQLPASSWORD"),
-    "database": os.getenv("MYSQLDATABASE"),
-    "port": int(os.getenv("MYSQLPORT", 3306)),
+    'host': os.environ.get('MYSQLHOST'),
+    'user': os.environ.get('MYSQLUSER'),
+    'password': os.environ.get('MYSQLPASSWORD'),
+    'database': os.environ.get('MYSQLDATABASE'),
+    'port': int(os.environ.get('MYSQLPORT', 3306)),
+    'cursorclass': pymysql.cursors.DictCursor
 }
+
+# Au démarrage de l'app, teste la connexion
+try:
+    test_conn = pymysql.connect(**DB_CONFIG)
+    print("✅ Connexion MySQL réussie !")
+    print(f"📊 Base: {DB_CONFIG['database']} sur {DB_CONFIG['host']}")
+    test_conn.close()
+except Exception as e:
+    print(f"❌ Erreur MySQL: {e}")
+    print("⚠️ L'application continue mais sans BDD...")
 
 LLM_API_KEY  = os.getenv("OPENAI_API_KEY", "")
 LLM_MODEL    = os.getenv("LLM_MODEL", "gpt-4o-mini")
 LLM_BASE_URL = os.getenv("LLM_BASE_URL", "https://api.openai.com/v1")
+
 
 # ── Schéma de la base (pour le prompt système) ─────────────────
 DB_SCHEMA = """
@@ -61,7 +73,7 @@ trajets(id, ligne_id, chauffeur_id, vehicule_id, date_heure_depart, date_heure_a
 incidents(id, trajet_id, type[panne/accident/retard/autre], description, gravite[faible/moyen/grave], date_incident, resolu)
 """
 
-SYSTEM_PROMPT =f"""Tu es TranspoBot, assistant de gestion de transport.
+SYSTEM_PROMPT = f"""Tu es TranspoBot, assistant de gestion de transport.
 
 {DB_SCHEMA}
 
@@ -77,7 +89,8 @@ RÈGLES :
 4. PAS de description de la requête SQL dans l'explication.
 5. Limite les résultats à 100 lignes avec LIMIT.
 """
-# ── Connexion MariaDB/MySQL ────────────────────────────────────
+
+# ── Connexion MySQL ────────────────────────────────────
 def get_db():
     return pymysql.connect(
         host=DB_CONFIG["host"],
@@ -101,6 +114,7 @@ def execute_query(sql: str):
             ]
     finally:
         conn.close()
+
 # ── Appel LLM ─────────────────────────────────────────────────
 async def ask_llm(question: str) -> dict:
     async with httpx.AsyncClient() as client:
@@ -127,6 +141,7 @@ async def ask_llm(question: str) -> dict:
         if match:
             return json.loads(match.group())
         raise ValueError("Réponse LLM invalide")
+
 # ── Routes API ─────────────────────────────────────────────────
 class ChatMessage(BaseModel):
     question: str
