@@ -233,6 +233,17 @@ def get_incidents():
         ORDER BY i.date_incident DESC
         LIMIT 20
     """)
+@app.get("/api/recettes/mois")
+def recettes_par_mois():
+    return execute_query("""
+        SELECT 
+            MONTH(date_heure_depart) as mois,
+            SUM(recette) as total
+        FROM trajets
+        WHERE statut='termine'
+        GROUP BY mois
+        ORDER BY mois
+    """)
 
 @app.get("/health")
 def health():
