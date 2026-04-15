@@ -10,13 +10,16 @@
 
   body {
     font-family: 'Segoe UI', sans-serif;
-    background: #f1f5f9;
+    background: font-family: 'Inter', 'Segoe UI', sans-serif;
+  background: linear-gradient(135deg, #eef2ff, #f8fafc);
+  color: #1e293b;
     color: #1e293b;
   }
 
   /* ── HEADER ── */
   header {
-    background: #1a56db;
+     background: linear-gradient(135deg, #1a56db, #3b82f6);
+  box-shadow: 0 6px 25px rgba(26,86,219,0.3);
     color: white;
     padding: 1rem 2rem;
     display: flex;
@@ -90,12 +93,19 @@
 
   /* ── CARDS ── */
   .card {
-    background: white;
-    border-radius: 14px;
-    padding: 1.2rem 1.3rem;
-    border: 0.5px solid #e2e8f0;
-    box-shadow: 0 1px 6px rgba(0,0,0,0.05);
-  }
+  background: rgba(255, 255, 255, 0.85);
+  backdrop-filter: blur(10px);
+  border-radius: 16px;
+  padding: 1.2rem;
+  border: 1px solid rgba(255,255,255,0.3);
+  box-shadow: 0 8px 30px rgba(0,0,0,0.08);
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+
+.card:hover {
+  transform: translateY(-3px);
+  box-shadow: 0 12px 40px rgba(26,86,219,0.15);
+}
 
   h2 {
     font-size: 0.78rem;
@@ -108,15 +118,22 @@
 
   /* ── STATS ── */
   .stats-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 0.7rem; margin-bottom: 1rem; }
-  .stat {
-    background: #eff6ff;
-    border-radius: 10px;
-    padding: 0.85rem;
-    text-align: center;
-    border: 1px solid #dbeafe;
-  }
-  .stat .val { font-size: 1.75rem; font-weight: 700; color: #1a56db; line-height: 1.1; }
-  .stat .lbl { font-size: 0.7rem; color: #64748b; margin-top: 4px; font-weight: 500; }
+ .stat {
+  background: linear-gradient(135deg, #1a56db, #3b82f6);
+  color: white;
+  border-radius: 12px;
+  padding: 1rem;
+  text-align: center;
+}
+
+.stat .val {
+  color: white;
+  font-size: 1.8rem;
+}
+
+.stat .lbl {
+  color: rgba(255,255,255,0.8);
+}
 
   /* ── BADGES ── */
   .badge { display: inline-block; padding: 2px 9px; border-radius: 20px; font-size: 0.7rem; font-weight: 600; }
@@ -157,16 +174,12 @@
   .msg.user { text-align: right; }
   .msg.bot  { text-align: left; }
   .msg.user .bubble {
-    background: #1a56db;
-    color: white;
-    border-radius: 16px 16px 4px 16px;
-    margin-left: auto;
+    background:linear-gradient(135deg, #1a56db, #2563eb);
+   
   }
   .msg.bot .bubble {
-    background: white;
-    border: 1px solid #e2e8f0;
-    color: #1e293b;
-    border-radius: 16px 16px 16px 4px;
+    background: #ffffff;
+  box-shadow: 0 4px 12px rgba(0,0,0,0.05);;
   }
   .bubble {
     display: inline-block;
@@ -197,9 +210,10 @@
     padding: 0.3rem 0.85rem;
     font-size: 0.75rem;
     cursor: pointer;
-    transition: background 0.15s;
+    transition:all 0.2s ease;
   }
-  .suggestions button:hover { background: #dbeafe; }
+  .suggestions button:hover { transform: translateY(-1px);
+  box-shadow: 0 6px 14px rgba(26,86,219,0.2); }
 
   /* ── CHAT INPUT ── */
   .chat-input { display: flex; gap: 0.5rem; }
