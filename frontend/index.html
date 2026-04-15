@@ -542,7 +542,9 @@ async function sendMessage() {
       document.getElementById('results-section').style.display = 'block';
       const keys = Object.keys(data.data[0]);
       const rows = data.data.map(row => `<tr>${keys.map(k => `<td>${row[k] ?? ''}</td>`).join('')}</tr>`).join('');
-      document.getElementById('results-table').innerHTML = `<table><thead><tr>${keys.map(k=>`<th>${k}</th>`).join('')}</tr></thead><tbody>${rows}</tbody></table>`;
+      document.getElementById('results-table').innerHTML = `<table><thead><tr>${keys.map(k=>`<th>${k}</th>`).join('')}</tr></thead><tbody>${rows}</tbody><table>`;
+    } else {
+      document.getElementById('results-section').style.display = 'none';
     }
   } catch(e) {
     console.log('Erreur chat:', e);
@@ -570,18 +572,31 @@ async function sendMessage2() {
   addMessage2('user', question);
   addMessage2('bot', '⏳ Analyse en cours...');
   try {
-    const r = await fetch(`${API}/api/chat`, { method: 'POST', headers: {'Content-Type': 'application/json'}, body: JSON.stringify({ question }) });
+    const r = await fetch(`${API}/api/chat`, {
+      method: 'POST',
+      headers: {'Content-Type': 'application/json'},
+      body: JSON.stringify({ question })
+    });
     const data = await r.json();
     document.querySelector('#chat-box-2 .msg.bot:last-child').remove();
-    const nbRes2 = data.resultats ? data.resultats.length : 0;
-    addMessage2('bot', (data.explication || data.error || '❌ Réponse invalide') + (nbRes2 > 0 ? ` (${nbRes2} résultat${nbRes2 > 1 ? 's' : ''})` : ''), data.sql);
-    if (data.resultats && data.resultats.length > 0) {
+    
+    const answer = data.answer || data.detail || '❌ Réponse invalide';
+    const count = data.count !== undefined ? ` (${data.count} résultat${data.count > 1 ? 's' : ''})` : '';
+    addMessage2('bot', answer + count, data.sql);
+    
+    if (data.data && data.data.length > 0) {
       document.getElementById('results-section-2').style.display = 'block';
-      const keys = Object.keys(data.resultats[0]);
-      const rows = data.resultats.map(row => `<tr>${keys.map(k => `<td>${row[k] ?? ''}</td>`).join('')}</tr>`).join('');
+      const keys = Object.keys(data.data[0]);
+      const rows = data.data.map(row => `<tr>${keys.map(k => `<td>${row[k] ?? ''}</td>`).join('')}</tr>`).join('');
       document.getElementById('results-table-2').innerHTML = `<table><thead><tr>${keys.map(k=>`<th>${k}</th>`).join('')}</tr></thead><tbody>${rows}</tbody></table>`;
+    } else {
+      document.getElementById('results-section-2').style.display = 'none';
     }
-  } catch(e) { document.querySelector('#chat-box-2 .msg.bot:last-child').remove(); addMessage2('bot', '❌ Erreur de connexion au serveur.'); }
+  } catch(e) {
+    console.log('Erreur chat:', e);
+    document.querySelector('#chat-box-2 .msg.bot:last-child').remove();
+    addMessage2('bot', '❌ Erreur de connexion au serveur.');
+  }
 }
 
 async function loadVehicules() {
